@@ -129,8 +129,8 @@ function getAlerts() {
 // --- CONFIGURACIÓN TELEGRAM ---
 // El usuario debe obtener estos datos de @BotFather y su grupo
 // OJO: REEMPLAZA ESTO EN GOOGLE APPS SCRIPT CON TU TOKEN REAL.
-var TELEGRAM_BOT_TOKEN = "PONER_AQUI_TU_TOKEN_REAL_EN_EL_SCRIPT_WEB";
-var TELEGRAM_CHAT_ID = "PONER_AQUI_TU_CHAT_ID_REAL_EN_EL_SCRIPT_WEB";
+var TELEGRAM_BOT_TOKEN = "SECRETO_EN_GOOGLE_CLOUD";
+var TELEGRAM_CHAT_ID = "SECRETO_EN_GOOGLE_CLOUD";
 
 function saveAlert(p) {
     var sheet = getSheet("Alertas");
