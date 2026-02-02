@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión Comunal - Presidencia</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="material-icons-round">account_balance</span>
+                <h2>PRESIDENCIA</h2>
+            </div>
+
+            <nav class="menu">
+                <div class="menu-label">COMUNIDAD</div>
+                <button class="menu-item active" onclick="Presi.nav('tab-news')">
+                    <span class="material-icons-round">campaign</span> Noticias
+                </button>
+                <button class="menu-item" onclick="Presi.nav('tab-polls')">
+                    <span class="material-icons-round">how_to_vote</span> Votaciones
+                </button>
+                <button class="menu-item" onclick="Presi.nav('tab-docs')">
+                    <span class="material-icons-round">folder</span> Documentos
+                </button>
+                <button class="menu-item" onclick="Presi.nav('tab-incidents')">
+                    <span class="material-icons-round">assignment</span> Reportes
+                </button>
+            </nav>
+
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Presidente&background=0D8ABC&color=fff" alt="Presi">
+                <div class="info">
+                    <strong>Presidente</strong>
+                    <small>Junta Vecinal</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="page-title">Noticias y Comunicados</h2>
+                <div class="actions">
+                    <button class="btn-primary" onclick="alert('Publicar Nuevo Video')">+ NUEVO COMUNICADO</button>
+                </div>
+            </header>
+
+            <!-- TAB: NOTICIAS -->
+            <div id="tab-news" class="content-tab active">
+                <div class="card">
+                    <h3>Historial de Comunicados</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Título</th>
+                                <th>Tipo</th>
+                                <th>Vistas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>02/02/2026</td>
+                                <td>Inicio de Obras</td>
+                                <td>Video</td>
+                                <td>45</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: VOTACIONES -->
+            <div id="tab-polls" class="content-tab">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Crear Nueva Votación</h3>
+                        <form id="form-poll">
+                            <label>Pregunta de la Encuesta</label>
+                            <input type="text" placeholder="Ej: ¿Aprobar Presupuesto Pintura?" class="full-width">
+
+                            <label>Opciones (Separar con comas)</label>
+                            <input type="text" placeholder="Sí, No, Abstención" value="Sí, No">
+
+                            <div class="row">
+                                <div class="col">
+                                    <label>Duración (Horas)</label>
+                                    <input type="number" value="24" min="1">
+                                </div>
+                            </div>
+                            <button class="btn-primary mt-2">LANZAR VOTACIÓN</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Votaciones Activas</h3>
+                        <div class="active-poll-item">
+                            <h4>¿Mejorar Parque? | Cierra: 2h</h4>
+                            <div class="progress-container">
+                                <div class="bar" style="width: 70%">Sí (70%)</div>
+                            </div>
+                            <button class="btn-sm text-only">Cerrar y Exportar Resultado</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: INCIDENCIAS (Ver Muro) -->
+            <div id="tab-incidents" class="content-tab">
+                <div class="card">
+                    <h3>Muro de Incidencias (Público)</h3>
+                    <div class="incidents-grid">
+                        <!-- Simulación Card -->
+                        <div class="incident-card">
+                            <img src="https://via.placeholder.com/300x150" alt="Foto">
+                            <div class="inc-details">
+                                <strong>Luz Rota - Calle 4</strong>
+                                <small>Reportado por: Familia X</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/president.js"></script>
+</body>
+
+</html>

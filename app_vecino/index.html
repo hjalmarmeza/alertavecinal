@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alerta Vecinal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+</head>
+
+<body>
+
+    <!-- PANTALLA 1: LOGIN -->
+    <section id="screen-login" class="screen active">
+        <div class="login-container">
+            <div class="logo-area">
+                <span class="material-icons-round logo-icon">security</span>
+                <h1>Alerta Vecinal</h1>
+                <p style="font-size: 1.1rem; color: #94a3b8; margin-top: 5px;">Urb. Melitón Carbajal</p>
+            </div>
+            <form id="form-login">
+                <div class="input-group">
+                    <span class="material-icons-round">email</span>
+                    <input type="email" id="login-email" placeholder="Correo Electrónico" required>
+                </div>
+                <div class="input-group">
+                    <span class="material-icons-round">lock</span>
+                    <input type="password" id="login-pass" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn-primary">INGRESAR AHORA</button>
+            </form>
+            <p class="text-link" onclick="App.nav.to('screen-register')">¿No tienes cuenta? <b>Regístrate aquí</b></p>
+        </div>
+    </section>
+
+    <!-- PANTALLA 2: REGISTRO (REDISEÑADA) -->
+    <section id="screen-register" class="screen">
+        <div class="home-header" style="padding-bottom: 0;">
+            <button onclick="App.nav.back()" class="btn-icon-back">
+                <span class="material-icons-round">arrow_back</span>
+            </button>
+            <h2 style="font-size: 1.5rem; font-weight: 700;">Crear Cuenta</h2>
+            <div style="width: 44px;"></div> <!-- Spacer -->
+        </div>
+
+        <div class="scroll-content">
+            <form id="form-register">
+
+                <h3
+                    style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 15px; font-weight: 800; text-transform: uppercase;">
+                    1. Tu Identidad</h3>
+
+                <div class="input-group">
+                    <span class="material-icons-round">person</span>
+                    <input type="text" id="reg-nombre" placeholder="Nombre Completo" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round">group</span>
+                    <input type="text" id="reg-familia" placeholder="Familia (Ej: Familia Pérez)" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round">phone_iphone</span>
+                    <input type="tel" id="reg-telefono" placeholder="Celular" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round">alternate_email</span>
+                    <input type="email" id="reg-email" placeholder="Correo Personal" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round">vpn_key</span>
+                    <input type="password" id="reg-pass" placeholder="Crear Contraseña" required>
+                </div>
+
+                <h3
+                    style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase;">
+                    2. Tu Ubicación</h3>
+
+                <div class="input-group">
+                    <span class="material-icons-round">location_city</span>
+                    <input type="text" id="reg-urb" value="Urb. Melitón Carbajal" readonly
+                        style="opacity: 0.8; cursor: not-allowed; background: transparent; border: none; font-size: 1.1rem; color: white; width:100%;">
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round">add_road</span>
+                    <input type="text" id="reg-calle" placeholder="Calle / Avenida">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <span class="material-icons-round">grid_3x3</span>
+                        <input type="text" id="reg-mz" placeholder="Mz">
+                    </div>
+                    <div class="input-group">
+                        <span class="material-icons-round">home</span>
+                        <input type="text" id="reg-lote" placeholder="Lote">
+                    </div>
+                </div>
+
+                <!-- GPS LOCK -->
+                <div class="gps-lock-box" id="gps-box">
+                    <div class="gps-status">
+                        <span class="material-icons-round" id="gps-icon">my_location</span>
+                    </div>
+                    <div class="gps-text">
+                        <strong>Ubicación GPS</strong>
+                        <small id="gps-msg">Autodetectando coordenadas...</small>
+                    </div>
+                    <input type="hidden" id="reg-coords">
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-bottom: 40px;">CONFIRMAR REGISTRO</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- PANTALLA 3: HOME (PÁNICO) -->
+    <section id="screen-home" class="screen">
+        <!-- Header -->
+        <header class="home-header">
+            <div class="user-info">
+                <small style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem;">BIENVENIDA</small>
+                <h3 style="text-transform: uppercase;"><span id="user-name">FAMILIA ...</span></h3>
+                <small id="user-addr" style="opacity: 0.7;">...</small>
+            </div>
+            <button class="btn-icon-back" onclick="App.nav.to('screen-feed')"
+                style="width: 50px; height: 50px; margin:0; border-radius: 16px;">
+                <span class="material-icons-round">notifications</span>
+                <span class="badge" id="news-badge">0</span>
+            </button>
+        </header>
+
+        <!-- ZONA PÁNICO -->
+        <div class="panic-zone">
+            <button id="btn-panic" class="pulse-button">
+                <div class="inner-circle">
+                    <span class="material-icons-round" style="font-size: 3rem; color: white;">sensors_off</span>
+                    <h1>SOS</h1>
+                    <small
+                        style="color: rgba(255,255,255,0.8); letter-spacing: 1px; font-size: 0.8rem; margin-top: -5px;">3
+                        TOQUES</small>
+                </div>
+            </button>
+        </div>
+
+        <!-- ACCESOS RÁPIDOS -->
+        <div class="quick-actions">
+            <button class="btn-action police" onclick="App.call('105')">
+                <span class="material-icons-round">local_police</span>
+                <span class="label">Policía</span>
+            </button>
+            <button class="btn-action fire" onclick="App.call('116')">
+                <span class="material-icons-round">local_fire_department</span>
+                <span class="label">Bomberos</span>
+            </button>
+            <button class="btn-action serenazgo" onclick="App.call('admin')">
+                <span class="material-icons-round">security</span>
+                <span class="label">Serenazgo</span>
+            </button>
+        </div>
+
+        <!-- MENU INFERIOR -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="App.nav.to('screen-home')">
+                <span class="material-icons-round">home</span>
+            </button>
+            <button class="nav-item" onclick="App.nav.to('screen-feed')">
+                <span class="material-icons-round">feed</span>
+            </button>
+            <button class="nav-item" onclick="App.nav.to('screen-report')">
+                <span class="material-icons-round">add_a_photo</span>
+            </button>
+            <button class="nav-item" onclick="App.nav.to('screen-directory')">
+                <span class="material-icons-round">contact_phone</span>
+            </button>
+        </nav>
+    </section>
+
+    <!-- PANTALLAS EXTRA (PLACEHOLDERS) -->
+    <section id="screen-feed" class="screen">
+        <div class="header-simple">
+            <h2>Noticias</h2>
+        </div>
+        <div class="scroll-content">
+            <p>No hay noticias recientes.</p>
+        </div>
+        <!-- Menu Repetido Simulado -->
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="App.nav.to('screen-home')"><span
+                    class="material-icons-round">home</span></button>
+            <button class="nav-item active"><span class="material-icons-round">feed</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-report')"><span
+                    class="material-icons-round">add_a_photo</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-directory')"><span
+                    class="material-icons-round">contact_phone</span></button>
+        </nav>
+    </section>
+
+    <section id="screen-report" class="screen">
+        <div class="header-simple">
+            <h2>Reportar</h2>
+        </div>
+        <div class="scroll-content">
+            <p>Formulario de Reportes...</p>
+        </div>
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="App.nav.to('screen-home')"><span
+                    class="material-icons-round">home</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-feed')"><span
+                    class="material-icons-round">feed</span></button>
+            <button class="nav-item active"><span class="material-icons-round">add_a_photo</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-directory')"><span
+                    class="material-icons-round">contact_phone</span></button>
+        </nav>
+    </section>
+
+    <section id="screen-directory" class="screen">
+        <div class="header-simple">
+            <h2>Directorio</h2>
+        </div>
+        <div class="scroll-content">
+            <p>Lista de Contactos...</p>
+        </div>
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="App.nav.to('screen-home')"><span
+                    class="material-icons-round">home</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-feed')"><span
+                    class="material-icons-round">feed</span></button>
+            <button class="nav-item" onclick="App.nav.to('screen-report')"><span
+                    class="material-icons-round">add_a_photo</span></button>
+            <button class="nav-item active"><span class="material-icons-round">contact_phone</span></button>
+        </nav>
+    </section>
+
+    <!-- ALERTA ROJA (OVERLAY) -->
+    <div id="red-alert-overlay" class="red-overlay hidden">
+        <span class="material-icons-round alert-icon">warning</span>
+        <div class="alert-content" style="text-align: center;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 1.2rem; margin-bottom: 10px;">ALERTA REPORTADA POR:</p>
+            <h1 id="alert-who" style="margin-bottom: 5px;">FAMILIA PÉREZ</h1>
+            <h2 id="alert-where" style="font-size: 1.5rem; font-weight: 500; opacity: 0.9;">MZ C - LOTE 4</h2>
+            <small id="alert-time" style="display: block; margin-top: 10px; font-size: 1rem;">Hace 1 min</small>
+        </div>
+
+        <style>
+            .btn-premium {
+                padding: 12px 24px;
+                border-radius: 50px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                color: white;
+                font-weight: 600;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .btn-premium:active {
+                transform: scale(0.95);
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .btn-premium.secondary {
+                background: rgba(0, 0, 0, 0.3);
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+        </style>
+        <div style="display: flex; gap: 15px; margin-top: 40px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn-premium" onclick="App.map.open()">
+                <span class="material-icons-round"
+                    style="font-size:18px; vertical-align:middle; margin-right:5px;">map</span>
+                VER MAPA
+            </button>
+            <button class="btn-premium secondary" onclick="App.monitor.hideRedScreen(true)">
+                <span class="material-icons-round"
+                    style="font-size:18px; vertical-align:middle; margin-right:5px;">check_circle</span>
+                ENTERADO
+            </button>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

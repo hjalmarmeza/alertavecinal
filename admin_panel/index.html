@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Alerta Vecinal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="material-icons-round">security</span>
+                <h2>GESTIÓN</h2>
+            </div>
+
+            <nav class="menu">
+                <!-- SECCIÓN SEGURIDAD (ADMIN) -->
+                <div class="menu-label">SEGURIDAD</div>
+                <button class="menu-item active" onclick="Admin.nav('tab-users')">
+                    <span class="material-icons-round">people</span> Usuarios
+                </button>
+                <button class="menu-item" onclick="Admin.nav('tab-config')">
+                    <span class="material-icons-round">settings</span> Configuración
+                </button>
+
+                <!-- SECCIÓN COMUNIDAD (PRESIDENTE) -->
+                <div class="menu-label">COMUNIDAD</div>
+                <button class="menu-item" onclick="Admin.nav('tab-news')">
+                    <span class="material-icons-round">campaign</span> Noticias
+                </button>
+                <button class="menu-item" onclick="Admin.nav('tab-polls')">
+                    <span class="material-icons-round">how_to_vote</span> Votaciones
+                </button>
+                <button class="menu-item" onclick="Admin.nav('tab-docs')">
+                    <span class="material-icons-round">folder</span> Documentos
+                </button>
+                <button class="menu-item" onclick="Admin.nav('tab-incidents')">
+                    <span class="material-icons-round">report_problem</span> Incidencias
+                </button>
+            </nav>
+
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin">
+                <div class="info">
+                    <strong>Administrador</strong>
+                    <small>Sesión Activa</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="page-title">Usuarios</h2>
+                <div class="actions">
+                    <div class="maint-toggle">
+                        <span>Modo Mantenimiento</span>
+                        <label class="switch">
+                            <input type="checkbox" id="maint-switch" onchange="Admin.toggleMaint()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB: USUARIOS -->
+            <div id="tab-users" class="content-tab active">
+                <div class="card">
+                    <h3>Solicitudes Pendientes</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Familia</th>
+                                <th>Dirección</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-users-list">
+                            <!-- JS insertará filas -->
+                            <tr>
+                                <td>Juan Pérez</td>
+                                <td>Familia Pérez</td>
+                                <td>Mz C Lote 4</td>
+                                <td>
+                                    <button class="btn-sm green">Aprobar</button>
+                                    <button class="btn-sm red">Rechazar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: VOTACIONES -->
+            <div id="tab-polls" class="content-tab">
+                <div class="card">
+                    <h3>Crear Nueva Votación</h3>
+                    <form id="form-poll">
+                        <input type="text" placeholder="Pregunta (Ej: ¿Aprobar Presupuesto?)" class="full-width">
+                        <div class="row">
+                            <input type="text" placeholder="Opción 1 (Sí)" value="Sí">
+                            <input type="text" placeholder="Opción 2 (No)" value="No">
+                        </div>
+                        <div class="row">
+                            <label>Cierra en (Horas):</label>
+                            <input type="number" value="24" min="1">
+                        </div>
+                        <button class="btn-primary">PUBLICAR VOTACIÓN</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- OTRAS TABS... -->
+            <div id="tab-news" class="content-tab">
+                <h2>Módulo Noticias</h2>
+            </div>
+            <div id="tab-incidents" class="content-tab">
+                <h2>Módulo Incidencias</h2>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+
+</html>
