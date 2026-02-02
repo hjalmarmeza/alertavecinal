@@ -211,17 +211,19 @@ function loginUser(p) {
             }
 
             var status = row[12]; // Col 13
+            // Normalizar (quitar espacios y poner mayúsculas)
+            var statusClean = String(status).trim().toUpperCase();
 
             // VALIDACIONES DE ACCESO
-            if (status === "BLOQUEADO") {
+            if (statusClean === "BLOQUEADO") {
                 return { status: "error", message: "Usuario BLOQUEADO por Administración." };
             }
-            if (status === "PENDIENTE") {
+            if (statusClean === "PENDIENTE") {
                 return { status: "error", message: "Tu cuenta está PENDIENTE de aprobación." };
             }
-            // Si por alguna razón no es ACTIVO (y no es el superadmin hardcoded arriba que ya se saltó esto si quisiéramos, pero mejor validamos)
-            if (status !== "ACTIVO" && rol !== "ADMIN") {
-                return { status: "error", message: "Cuenta no activa. Contacta al administrador." };
+            // Validación estricta
+            if (statusClean !== "ACTIVO" && rol !== "ADMIN") {
+                return { status: "error", message: "Cuenta no activa (" + statusClean + "). Contacta al Admin." };
             }
 
             return {
