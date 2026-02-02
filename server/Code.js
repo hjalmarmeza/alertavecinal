@@ -199,7 +199,10 @@ function loginUser(p) {
         if (dbEmail == inputEmail && dbPass == inputPass) {
 
             // Validar Estado
-            var status = row[11];
+            // NUEVA ESTRUCTURA: [0]ID, [1]EMAIL..., [11]ROL, [12]ESTADO
+            var rol = row[11];
+            var status = row[12]; // Col 13
+
             if (status === "BLOQUEADO") {
                 return { status: "error", message: "Usuario BLOQUEADO por Administración." };
             }
@@ -208,12 +211,13 @@ function loginUser(p) {
                 status: "success",
                 message: "Bienvenido",
                 user: {
-                    email: row[1], // Devolvemos el original como está en BD
+                    email: row[1],
                     nombre: row[3],
                     familia: row[4],
                     mz: row[7],
                     lote: row[8],
-                    coords: row[9], // GPS registrado
+                    coords: row[9],
+                    rol: rol, // Devolver rol
                     status: status
                 }
             };
@@ -221,6 +225,31 @@ function loginUser(p) {
     }
     return { status: "error", message: "Correo o contraseña incorrectos." };
 }
+
+// ... UTILS ...
+
+function resolveUser(p) {
+    var sheet = getSheet("Usuarios");
+    var data = sheet.getDataRange().getValues();
+
+    for (var i = 1; i < data.length; i++) {
+        // Col 0 es ID
+        if (data[i][0] == p.user_id) {
+            // Actualizar Estado en Columna 13 (Indice 12 -> Col 13)
+            sheet.getRange(i + 1, 13).setValue(p.status);
+
+            // Si aprobamos y no tiene rol, asignar VECINO por defecto en Col 12
+            if (p.status === 'ACTIVO') {
+                var currentRol = sheet.getRange(i + 1, 12).getValue();
+                if (!currentRol) sheet.getRange(i + 1, 12).setValue("VECINO");
+            }
+
+            return { status: "success", message: "Usuario actualizado a " + p.status };
+        }
+    }
+    return { status: "error", message: "ID no encontrado" };
+}
+
 
 // --- UTILS ---
 function getSheet(name) {

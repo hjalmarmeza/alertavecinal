@@ -49,6 +49,17 @@ const App = {
             if (document.getElementById('user-addr')) {
                 document.getElementById('user-addr').innerText = `Mz ${App.user.mz} - Lote ${App.user.lote}`;
             }
+
+            // Manejo de roles (Botón Admin)
+            const adminBtn = document.getElementById('btn-admin-access');
+            if (adminBtn) {
+                const rol = (App.user.rol || "").toUpperCase();
+                if (rol === "ADMIN" || rol === "PRESIDENTE") {
+                    adminBtn.classList.remove('hidden');
+                } else {
+                    adminBtn.classList.add('hidden');
+                }
+            }
         }
     },
 
