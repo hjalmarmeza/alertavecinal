@@ -94,13 +94,16 @@ const App = {
             body: JSON.stringify(data)
         })
             .then(() => {
-                alert("✅ Solicitud enviada correctamente.\nEl Administrador debe aprobar tu cuenta.");
+                alert("✅ Solicitud enviada correctamente.\nEl Administrador debe aprobar tu cuenta antes de que puedas ingresar.");
                 btn.innerText = "ENVIADO";
-                // Guardar localmente para demo (aunque no esté aprobado aun)
-                localStorage.setItem('av_user', JSON.stringify(data));
-                App.user = data;
-                App.updateUI();
-                App.nav.to('screen-home');
+                document.getElementById('form-register').reset();
+
+                // NO Loguear. Redirigir al inicio para esperar aprobación.
+                setTimeout(() => {
+                    App.nav.to('screen-login');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }, 1000);
             })
             .catch(err => {
                 console.error(err);

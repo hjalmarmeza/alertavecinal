@@ -212,8 +212,16 @@ function loginUser(p) {
 
             var status = row[12]; // Col 13
 
+            // VALIDACIONES DE ACCESO
             if (status === "BLOQUEADO") {
                 return { status: "error", message: "Usuario BLOQUEADO por Administración." };
+            }
+            if (status === "PENDIENTE") {
+                return { status: "error", message: "Tu cuenta está PENDIENTE de aprobación." };
+            }
+            // Si por alguna razón no es ACTIVO (y no es el superadmin hardcoded arriba que ya se saltó esto si quisiéramos, pero mejor validamos)
+            if (status !== "ACTIVO" && rol !== "ADMIN") {
+                return { status: "error", message: "Cuenta no activa. Contacta al administrador." };
             }
 
             return {
