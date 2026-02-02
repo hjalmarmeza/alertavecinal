@@ -4,6 +4,7 @@ const Admin = {
     init: () => {
         // Cargar datos iniciales
         Admin.loadUsers();
+        if (Admin.news) Admin.news.load();
     },
 
     nav: (tabId) => {
@@ -76,6 +77,67 @@ const Admin = {
                     })
                     .catch(e => alert("Error de conexión"));
             }
+        }
+    },
+
+    // --- NOTICIAS ---
+    news: {
+        publish: (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "ENVIANDO...";
+            btn.disabled = true;
+
+            const payload = {
+                action: 'save_news',
+                titulo: document.getElementById('news-title').value,
+                cuerpo: document.getElementById('news-body').value,
+                imagen: document.getElementById('news-img').value
+            };
+
+            fetch(Admin.apiUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert("Noticia Publicada 📢");
+                btn.innerText = "PUBLICADA";
+                document.getElementById('form-news').reset();
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    Admin.news.load();
+                }, 2000);
+            }).catch(err => {
+                alert("Error de red");
+                btn.disabled = false;
+            });
+        },
+
+        load: () => {
+            const list = document.getElementById('news-history-list');
+            if (!list) return;
+
+            fetch(`${Admin.apiUrl}?action=get_news`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        list.innerHTML = "";
+                        if (data.data.length === 0) {
+                            list.innerHTML = "<li>No hay noticias aún.</li>";
+                            return;
+                        }
+                        data.data.forEach(n => {
+                            const li = document.createElement('li');
+                            li.style.padding = "10px";
+                            li.style.borderBottom = "1px solid #eee";
+                            li.innerHTML = `<strong>${n.titulo}</strong> <br> <small>${new Date(n.fecha).toLocaleDateString()}</small>`;
+                            list.appendChild(li);
+                        });
+                    }
+                });
         }
     }
 };

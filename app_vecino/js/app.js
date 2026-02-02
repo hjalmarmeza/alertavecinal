@@ -364,11 +364,73 @@ const App = {
         }
     },
 
-    // --- LLAMADAS ---
     call: (number) => {
         if (number === 'admin') number = '999999999';
         window.location.href = `tel:${number}`;
+    },
+
+    // --- NOTICIAS ---
+    news: {
+        load: () => {
+            const container = document.querySelector('#screen-feed .scroll-content');
+            if (!container) return;
+
+            container.innerHTML = '<p style="text-align:center; padding:20px; color:#64748b;">Cargando novedades...</p>';
+
+            const timestamp = new Date().getTime();
+            fetch(`${App.apiUrl}?action=get_news&t=${timestamp}`)
+                .then(res => res.json())
+                .then(data => {
+                    container.innerHTML = "";
+                    if (data.status === 'success' && data.data.length > 0) {
+                        data.data.forEach(n => {
+                            // Crear Tarjeta de Noticia
+                            const date = new Date(n.fecha).toLocaleDateString();
+                            let imgHtml = "";
+                            if (n.imagen && n.imagen.startsWith('http')) {
+                                imgHtml = `<img src="${n.imagen}" style="width:100%; border-radius:8px; margin-top:10px; max-height:200px; object-fit:cover;">`;
+                            }
+
+                            const card = document.createElement('div');
+                            card.className = "news-card"; // Necesitaremos CSS para esto
+                            card.style.background = "white";
+                            card.style.padding = "15px";
+                            card.style.borderRadius = "12px";
+                            card.style.marginBottom = "15px";
+                            card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+
+                            card.innerHTML = `
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                                    <span style="font-size:0.7rem; background:#e0f2fe; color:#0284c7; padding:2px 8px; border-radius:10px; font-weight:600;">COMUNICADO</span>
+                                    <small style="color:#94a3b8; font-size:0.75rem;">${date}</small>
+                                </div>
+                                <h3 style="margin: 5px 0; color:#1e293b; font-size:1.1rem;">${n.titulo}</h3>
+                                <p style="color:#475569; font-size:0.9rem; line-height:1.5;">${n.cuerpo}</p>
+                                ${imgHtml}
+                            `;
+                            container.appendChild(card);
+                        });
+
+                        // Actualizar badge
+                        const badge = document.getElementById('news-badge');
+                        if (badge) {
+                            badge.innerText = data.data.length;
+                            badge.style.display = 'flex';
+                        }
+
+                    } else {
+                        container.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.6;"><span class="material-icons-round" style="font-size:3rem; color:#cbd5e1;">newspaper</span><p>No hay noticias recientes</p></div>';
+                    }
+                })
+                .catch(e => {
+                    container.innerHTML = '<p style="text-align:center; color:red;">Error de conexión</p>';
+                });
+        }
     }
 };
 
-window.onload = App.init;
+window.onload = () => {
+    App.init();
+    // Cargar noticias al inicio (o al cambiar de tab)
+    App.news.load();
+};

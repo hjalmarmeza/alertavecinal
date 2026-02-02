@@ -120,8 +120,36 @@
             </div>
 
             <!-- OTRAS TABS... -->
+            <!-- TAB: NOTICIAS (FEED) -->
             <div id="tab-news" class="content-tab">
-                <h2>Módulo Noticias</h2>
+                <div class="card">
+                    <h3>Publicar Noticia</h3>
+                    <form id="form-news" onsubmit="Admin.news.publish(event)">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="news-title" placeholder="Ej: Reunión de Seguridad" class="full-width"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cuerpo del Mensaje</label>
+                            <textarea id="news-body" rows="4" placeholder="Escribe aquí los detalles..."
+                                class="full-width" required></textarea>
+                            <small>Puedes usar emojis 🚨 📢</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Link de Imagen (Opcional)</label>
+                            <input type="url" id="news-img" placeholder="https://..." class="full-width">
+                        </div>
+                        <button type="submit" class="btn-primary">PUBLICAR AHORA</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Historial Reciente</h3>
+                    <ul id="news-history-list" style="list-style: none; padding: 0; color: #64748b;">
+                        <li>Cargando historial...</li>
+                    </ul>
+                </div>
             </div>
             <div id="tab-incidents" class="content-tab">
                 <h2>Módulo Incidencias</h2>

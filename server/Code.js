@@ -39,6 +39,8 @@ function handleRequest(e) {
         else if (action === "resolve_user") result = resolveUser(params); // Nuevo
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
+        else if (action === "save_news") result = saveNews(params); // Rutas Noticias
+        else if (action === "get_news") result = getNews();         // Rutas Noticias
         else result = { status: "error", message: "Action unknown: " + action };
 
     } catch (error) {
@@ -126,8 +128,9 @@ function getAlerts() {
 
 // --- CONFIGURACIÓN TELEGRAM ---
 // El usuario debe obtener estos datos de @BotFather y su grupo
-var TELEGRAM_BOT_TOKEN = "8536660694:AAGbSnPtroHr3XQv-vK9zEshCVFiGCYrkQw";
-var TELEGRAM_CHAT_ID = "-5220548101";
+// OJO: REEMPLAZA ESTO EN GOOGLE APPS SCRIPT CON TU TOKEN REAL.
+var TELEGRAM_BOT_TOKEN = "PONER_AQUI_TU_TOKEN_REAL_EN_EL_SCRIPT_WEB";
+var TELEGRAM_CHAT_ID = "PONER_AQUI_TU_CHAT_ID_REAL_EN_EL_SCRIPT_WEB";
 
 function saveAlert(p) {
     var sheet = getSheet("Alertas");
@@ -201,6 +204,12 @@ function loginUser(p) {
             // Validar Estado
             // NUEVA ESTRUCTURA: [0]ID, [1]EMAIL..., [11]ROL, [12]ESTADO
             var rol = row[11];
+
+            // SUPERADMIN HARDCODED (Seguridad)
+            if (dbEmail === "hjalmar.meza@gmail.com") {
+                rol = "ADMIN";
+            }
+
             var status = row[12]; // Col 13
 
             if (status === "BLOQUEADO") {
@@ -345,4 +354,52 @@ function resolveUser(p) {
         }
     }
     return { status: "error", message: "ID no encontrado" };
+}
+
+// --- NOTICIAS ---
+function saveNews(p) {
+    var sheet = getSheet("Noticias"); // Se crea auto si no existe gracias a getSheet
+    if (sheet.getLastRow() === 0) {
+        sheet.appendRow(["ID", "Titulo", "Cuerpo", "Fecha", "Imagen", "Autor"]);
+    }
+
+    var id = guid();
+    var fecha = new Date();
+
+    sheet.appendRow([
+        id,
+        p.titulo,
+        p.cuerpo,
+        fecha,
+        p.imagen || "",
+        "ADMIN"
+    ]);
+
+    return { status: "success", message: "Noticia publicada" };
+}
+
+function getNews() {
+    var sheet = getSheet("Noticias");
+    if (sheet.getLastRow() < 2) return { status: "success", data: [] };
+
+    var data = sheet.getDataRange().getValues();
+    var news = [];
+
+    // Inverso (Noticias nuevas primero)
+    for (var i = data.length - 1; i >= 1; i--) {
+        var row = data[i];
+        if (!row[0]) continue;
+
+        news.push({
+            id: row[0],
+            titulo: row[1],
+            cuerpo: row[2],
+            fecha: row[3],
+            imagen: row[4]
+        });
+
+        if (news.length >= 20) break;
+    }
+
+    return { status: "success", data: news };
 }
