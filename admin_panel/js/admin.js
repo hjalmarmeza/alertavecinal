@@ -123,10 +123,15 @@ const Admin = {
                     <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">Rechazar</button>
                 `;
             } else {
-                // MODIFICACION: Botón Bloquear solo para ACTIVOS
-                // Si el usuario logueado es PRESIDENTE, podrías ocultar esto si quisieras.
-                // Pero acordamos que ambos pueden.
+                // MODIFICACION: Botón Bloquear y Botón ASCENDER A PRESIDENTE
+                // Solo si soy ADMIN puedo ascender a otros.
+                // Si soy Presidente, no debería poder crear otros Presidentes (opcional).
+
+                // Botón Corona (Ascender)
+                const promoteBtn = `<button class="btn-sm purple" title="Ascender a Presidente" onclick="Admin.users.promote('${u.id}', '${u.nombre}')">👑</button>`;
+
                 actions = `
+                    ${promoteBtn}
                     <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">BLOQUEAR</button>
                 `;
             }
@@ -135,6 +140,7 @@ const Admin = {
                 <td>
                     <div style="font-weight:600">${u.nombre}</div>
                     <div style="font-size:0.8rem; opacity:0.7">${u.email}</div>
+                    ${u.rol === 'PRESIDENTE' ? '<span class="chip" style="background:var(--primary); color:white; font-size:0.6rem;">PRESIDENTE</span>' : ''}
                 </td>
                 <td>${u.familia}</td>
                 <td>Mz ${u.mz} Lt ${u.lote}</td>
@@ -160,7 +166,7 @@ const Admin = {
 
     users: {
         resolve: (id, status) => {
-            const actionText = status === 'ACTIVO' ? "APROBAR" : "RECHAZAR";
+            const actionText = status === 'ACTIVO' ? "APROBAR" : (status === 'BLOQUEADO' ? "BLOQUEAR" : "RECHAZAR");
             if (confirm(`¿Estás seguro de ${actionText} a este usuario?`)) {
                 // Llamada API
                 fetch(`${Admin.apiUrl}?action=resolve_user&user_id=${id}&status=${status}`)
@@ -168,6 +174,18 @@ const Admin = {
                     .then(d => {
                         alert(d.message);
                         Admin.loadUsers(); // Recargar lista
+                    })
+                    .catch(e => alert("Error de conexión"));
+            }
+        },
+
+        promote: (id, name) => {
+            if (confirm(`¿Deseas nombrar PRESIDENTE de la Junta Directiva a ${name}?\n\nEste usuario tendrá acceso al Panel Administrativo.`)) {
+                fetch(`${Admin.apiUrl}?action=resolve_user&user_id=${id}&status=ACTIVO&role=PRESIDENTE`)
+                    .then(res => res.json())
+                    .then(d => {
+                        alert("✅ " + name + " ahora es Presidente.");
+                        Admin.loadUsers();
                     })
                     .catch(e => alert("Error de conexión"));
             }

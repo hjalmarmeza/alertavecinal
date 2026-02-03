@@ -366,21 +366,27 @@ function resolveUser(p) {
         // Col 0 es ID. Forzamos String y Trim para evitar fallos de coincidencia
         if (String(data[i][0]).trim() == String(p.user_id).trim()) {
 
-            // OBLIGATORIO: Escritura explícita para evitar ambigüedades
-            if (p.status === 'ACTIVO') {
-                // Columna 12 (L) -> ROL = VECINO
-                sheet.getRange(i + 1, 12).setValue("VECINO");
-                // Columna 13 (M) -> ESTADO = ACTIVO
-                sheet.getRange(i + 1, 13).setValue("ACTIVO");
-            } else {
-                // Si bloquemos o pendiente, solo actualizamos Estado en Col 13
-                sheet.getRange(i + 1, 13).setValue(p.status);
+            // ACTUALIZAR ROL SI SE ESPECIFICA
+            if (p.role) {
+                // Columna 12 (L) -> ROL (Indice 11)
+                sheet.getRange(i + 1, 12).setValue(p.role);
+            } else if (p.status === 'ACTIVO') {
+                // Default: si aprobamos y no tiene rol, poner VECINO
+                // Pero solo si estaba vacío. Si ya era P, lo dejamos.
+                var currentRole = data[i][11];
+                if (!currentRole || currentRole === "") {
+                    sheet.getRange(i + 1, 12).setValue("VECINO");
+                }
             }
+
+            // ACTUALIZAR ESTADO
+            // Columna 13 (M) -> ESTADO (Indice 12)
+            sheet.getRange(i + 1, 13).setValue(p.status);
 
             // FORCE SAVE (Vital para ver cambios inmediatos)
             SpreadsheetApp.flush();
 
-            return { status: "success", message: "Usuario actualizado a " + p.status + " en fila " + (i + 1) };
+            return { status: "success", message: "Usuario actualizado a " + p.status + (p.role ? " con rol " + p.role : "") };
         }
     }
     return { status: "error", message: "ID no encontrado" };
