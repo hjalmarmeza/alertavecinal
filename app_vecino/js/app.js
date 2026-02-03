@@ -547,9 +547,16 @@ const App = {
                             const tagClass = (n.tipo && n.tipo === 'ALERTA') ? 'alert' : 'info';
 
                             let imgHtml = "";
-                            if (n.imagen && (n.imagen.startsWith('http') || n.imagen.startsWith('data:image'))) {
-                                const cleanSrc = n.imagen.replace(/(\r\n|\n|\r)/gm, "");
-                                imgHtml = `<img src="${cleanSrc}" class="news-image" loading="lazy">`;
+                            if (n.imagen && n.imagen.length > 50) {
+                                // Limpieza agresiva de saltos de línea y espacios
+                                let cleanSrc = n.imagen.replace(/(\r\n|\n|\r)/gm, "").trim();
+
+                                // Si es base64 pero le falta el prefijo, agregarlo
+                                if (!cleanSrc.startsWith('http') && !cleanSrc.startsWith('data:image')) {
+                                    cleanSrc = "data:image/jpeg;base64," + cleanSrc;
+                                }
+
+                                imgHtml = `<img src="${cleanSrc}" class="news-image" loading="lazy" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-top:10px;">`;
                             }
 
                             const card = document.createElement('div');
@@ -557,14 +564,15 @@ const App = {
 
                             const cuerpoTexto = n.cuerpo || "";
 
+                            // Reordenamos: Titulo -> Imagen -> Texto -> Footer
                             card.innerHTML = `
                                 <div class="news-header">
                                     <span class="chip ${tagClass}">${n.tipo || 'COMUNICADO'}</span>
                                     <small style="color:var(--text-sec); font-size:0.75rem;">${date}</small>
                                 </div>
-                                <h3 class="news-title">${n.titulo}</h3>
-                                <div class="news-body" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${cuerpoTexto}</div>
+                                <h3 class="news-title" style="margin-bottom:5px;">${n.titulo}</h3>
                                 ${imgHtml}
+                                <div class="news-body" style="margin-top:10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${cuerpoTexto}</div>
                             `;
 
                             card.onclick = () => {
