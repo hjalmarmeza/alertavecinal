@@ -272,6 +272,12 @@ input:-webkit-autofill:active {
 }
 
 /* --- HOME / PANIC --- */
+#screen-home {
+    padding-bottom: 140px;
+    /* Seguridad total contra solapamiento */
+    box-sizing: border-box;
+}
+
 .home-header {
     padding: 20px 24px 10px;
     /* Reducido drásticamente (antes 60px) */
