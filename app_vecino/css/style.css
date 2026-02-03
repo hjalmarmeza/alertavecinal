@@ -273,22 +273,27 @@ input:-webkit-autofill:active {
 
 /* --- HOME / PANIC --- */
 .home-header {
-    padding: 60px 24px 20px;
+    padding: 20px 24px 10px;
+    /* Reducido drásticamente (antes 60px) */
+    padding-top: max(20px, env(safe-area-inset-top));
+    /* Safe area support */
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    min-height: 80px;
 }
 
 .user-info h3 {
-    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
     font-weight: 700;
+    margin-bottom: 2px;
     background: linear-gradient(to right, #fff, #94a3b8);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-/* PANIC BUTTON ULTRA */
+/* PANIC BUTTON COMPACTO */
 .panic-zone {
     flex: 1;
     display: flex;
@@ -296,12 +301,14 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     position: relative;
+    max-height: 50vh;
+    /* Limitar altura para evitar empujar todo */
 }
 
 .pulse-button {
-    width: min(280px, 75vw);
-    /* Responsive size */
-    height: min(280px, 75vw);
+    width: min(200px, 55vw);
+    /* Reducido de 280px */
+    height: min(200px, 55vw);
     border-radius: 50%;
     background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, transparent 70%);
     border: 1px solid rgba(244, 63, 94, 0.2);
@@ -309,134 +316,93 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     position: relative;
+    margin: 0 auto;
 }
 
-.pulse-button::before {
+.pulse-button::before,
+.pulse-button::after {
+    /* Mismas animaciones pero se ajustarán al tamaño padre */
     content: '';
     position: absolute;
-    inset: -20px;
+    inset: -15px;
+    /* Menos expansión */
     border-radius: 50%;
     border: 2px solid var(--primary);
     opacity: 0.5;
     animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
 
-.pulse-button::after {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    opacity: 0.3;
-    animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-    animation-delay: -1s;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0.8);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
-}
-
 .inner-circle {
-    width: min(220px, 60vw);
-    height: min(220px, 60vw);
+    width: min(160px, 45vw);
+    /* Reducido de 220px */
+    height: min(160px, 45vw);
     background: radial-gradient(circle at 30% 30%, #fb7185, #e11d48);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 20px 50px rgba(225, 29, 72, 0.5), inset 0 5px 15px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 15px 40px rgba(225, 29, 72, 0.5), inset 0 5px 15px rgba(255, 255, 255, 0.4);
     z-index: 2;
     transition: transform 0.1s;
 }
 
-.inner-circle:active {
-    transform: scale(0.95);
-}
-
 .inner-circle h1 {
-    font-size: 4rem;
+    font-size: 2.5rem;
+    /* Reducido de 4rem */
     font-weight: 900;
     margin: 0;
     text-shadow: 0 2px 10px rgba(100, 0, 0, 0.4);
     mix-blend-mode: overlay;
 }
 
-/* ACTION GRID */
+/* ACTION GRID COMPACTO */
 .quick-actions {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 12px;
     padding: 0 24px;
-    margin-bottom: 120px;
+    margin-bottom: 90px;
+    /* Espacio para navbar */
+    margin-top: auto;
+    /* Empujar hacia abajo si sobra espacio */
 }
 
 .btn-action {
     background: rgba(30, 41, 59, 0.6);
     border: 1px solid var(--surface-border);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 16px 0;
+    border-radius: 16px;
+    padding: 12px 0;
+    /* Menos padding */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: transform 0.2s, background 0.2s;
 }
 
-.btn-action:active {
-    transform: scale(0.95);
-    background: rgba(255, 255, 255, 0.1);
-}
-
 .btn-action span.material-icons-round {
-    font-size: 2rem;
+    font-size: 1.8rem;
 }
 
 .btn-action span.label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #cbd5e1;
-}
-
-.btn-action.police {
-    color: #38bdf8;
-    border-bottom: 2px solid #38bdf8;
-}
-
-.btn-action.fire {
-    color: #fb923c;
-    border-bottom: 2px solid #fb923c;
-}
-
-.btn-action.serenazgo {
-    color: #a78bfa;
-    border-bottom: 2px solid #a78bfa;
+    font-size: 0.75rem;
 }
 
 /* DOCK NAVIGATION */
 .bottom-nav {
     position: absolute;
-    bottom: 30px;
-    left: 24px;
-    right: 24px;
+    bottom: 20px;
+    /* Un poco mas abajo */
+    left: 20px;
+    right: 20px;
     height: auto;
-    padding: 10px 0;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: space-around;
+    padding: 8px 0;
+    background: rgba(15, 23, 42, 0.95);
+    /* Mas solido */
+    justify-content: space-evenly;
+    /* Mejor distribucion */
     align-items: center;
     z-index: 50;
 }
