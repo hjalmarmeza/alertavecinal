@@ -164,14 +164,23 @@ const App = {
             window.onpopstate = () => App.nav.back();
         },
         to: (screenId) => {
+            const screen = document.getElementById(screenId);
+            if (!screen) {
+                console.warn(`Screen ${screenId} not found`);
+                return;
+            }
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            screen.classList.add('active');
             history.pushState({ screen: screenId }, screenId, `#${screenId}`);
         },
         back: () => {
             history.back();
         }
     },
+
+    // ... (rest of the file remains, but I can't match it all easily so I'll just skip to window.onload)
+    // Wait, I cannot skip with replace_file_content unless I target specific chunks. I will do 2 separate edits.
+
 
     // --- PÁNICO (3 TOQUES) ---
     panic: {
@@ -668,6 +677,6 @@ const App = {
 
 window.onload = () => {
     App.init();
-    App.news.load();
+    // App.news.load(); // Deshabilitado en Lite
     App.directory.load();
 };
