@@ -156,9 +156,20 @@ const Admin = {
 
                     // 2. LLENAR ACTIVOS
                     // Filtraremos para NO mostrar bloqueados aquí, o sí? Mejor solo Activos para bloquearlos.
-                    const cleanActive = data.data.filter(u => u.status === 'ACTIVO' && u.rol !== 'ADMIN');
-                    // Excluímos al ADMIN supremo para que no se auto-bloquee por error, 
-                    // aunque el backend debería protegerlo.
+                    const cleanActive = data.data.filter(u => {
+                        // 1. Debe ser ACTIVO o tener rol de PRESIDENTE (status activo)
+                        if (u.status !== 'ACTIVO' && u.status !== 'PRESIDENTE') return false;
+
+                        // 2. Nunca mostrar al ADMIN supremo
+                        if (u.rol === 'ADMIN') return false;
+
+                        // 3. Si soy PRESIDENTE, no ver a otros PRESIDENTES (ni a mí mismo)
+                        if (Admin.user && Admin.user.rol === 'PRESIDENTE') {
+                            if (u.rol === 'PRESIDENTE') return false;
+                        }
+
+                        return true;
+                    });
 
                     if (tbodyActive) {
                         Admin.allActiveUsers = cleanActive; // Guardar para filtro
@@ -189,12 +200,11 @@ const Admin = {
                     <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">Rechazar</button>
                 `;
             } else {
-                // MODIFICACION: Botón Bloquear y Botón ASCENDER A PRESIDENTE
-                // Solo si soy ADMIN puedo ascender a otros.
-                // Si soy Presidente, no debería poder crear otros Presidentes (opcional).
-
-                // Botón Corona (Ascender)
-                const promoteBtn = `<button class="btn-sm purple" title="Ascender a Presidente" onclick="Admin.users.promote('${u.id}', '${u.nombre}')">👑</button>`;
+                // MODIFICACION: Botón Corona SOLO para ADMIN
+                let promoteBtn = '';
+                if (Admin.user && Admin.user.rol === 'ADMIN') {
+                    promoteBtn = `<button class="btn-sm purple" title="Ascender a Presidente" onclick="Admin.users.promote('${u.id}', '${u.nombre}')">👑</button>`;
+                }
 
                 actions = `
                     ${promoteBtn}
