@@ -119,7 +119,7 @@ const Admin = {
                     <div class="card" style="margin-top:20px;">
                         <h3>Acerca de</h3>
                         <p style="color:var(--text-sec); font-size:0.9rem;">
-                            Alerta Vecinal v2.1 (Mobile)<br>Dev: Antigravity
+                            Alerta Vecinal v2.1 (Mobile)<br>Premium Build
                         </p>
                     </div>
                  `;

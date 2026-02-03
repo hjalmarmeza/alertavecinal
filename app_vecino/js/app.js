@@ -31,8 +31,8 @@ const App = {
             App.monitor.start();
         }
 
-        // Intervalo de mantenimiento (cada 5 min)
-        setInterval(App.checkMaintenance, 300000);
+        // Intervalo de mantenimiento (cada 60 seg)
+        setInterval(App.checkMaintenance, 60000);
     },
 
     checkMaintenance: () => {
