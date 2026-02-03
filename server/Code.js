@@ -200,11 +200,21 @@ function sendTelegramMessage(text) {
         "method": "post",
         "contentType": "application/json",
         "payload": JSON.stringify(payload),
-        "muteHttpExceptions": true // Importante para ver si Telegram devuelve error 400
+        "muteHttpExceptions": true
     };
 
     var response = UrlFetchApp.fetch(url, options);
-    return response.getContentText(); // Devolvemos la respuesta para verla en logs
+    var content = response.getContentText();
+    var code = response.getResponseCode();
+
+    console.log("Telegram Response Code: " + code);
+    console.log("Telegram Body: " + content);
+
+    if (code !== 200) {
+        throw new Error("Telegram FAILED (" + code + "): " + content);
+    }
+
+    return content;
 }
 
 function loginUser(p) {
