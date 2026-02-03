@@ -255,14 +255,20 @@ const Admin = {
                         // Action: If active, click to resolve
                         const actionAttr = !isResolved ? `onclick="Admin.resolveAlert('${a.id}')" style="cursor:pointer;" title="Tocar para atender"` : '';
 
+                        // Delete Button
+                        const deleteBtn = `<button class="btn-icon" onclick="Admin.deleteAlert('${a.id}')" title="Eliminar registro" style="margin-left:auto; color:#94a3b8;"><span class="material-icons-round">delete_outline</span></button>`;
+
                         tr.innerHTML = `
                             <td>${new Date(a.date).toLocaleString()}</td>
                             <td><strong>${a.user}</strong></td>
-                            <td>
-                                <span class="${statusClass}" ${actionAttr}>
-                                    ${displayStatus}
-                                </span>
-                                ${!isResolved ? '<div style="font-size:0.7rem; color:var(--text-sec); margin-top:4px;">Tocar para atender</div>' : ''}
+                            <td style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                                <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <span class="${statusClass}" ${actionAttr}>
+                                        ${displayStatus}
+                                    </span>
+                                    ${!isResolved ? '<div style="font-size:0.7rem; color:var(--text-sec);">Tocar para atender</div>' : ''}
+                                </div>
+                                ${deleteBtn}
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -279,11 +285,22 @@ const Admin = {
 
     resolveAlert: (id) => {
         if (confirm("¿Confirmas que esta alerta ha sido ATENDIDA?")) {
-            // Optimistic update
             fetch(`${Admin.apiUrl}?action=resolve_alert&alert_id=${id}`)
                 .then(res => res.json())
                 .then(d => {
                     alert("Alerta actualizada.");
+                    Admin.loadSOSHistory();
+                })
+                .catch(e => alert("Error de conexión"));
+        }
+    },
+
+    deleteAlert: (id) => {
+        if (confirm("¿Estás seguro de ELIMINAR este registro?\nEsta acción no se puede deshacer.")) {
+            fetch(`${Admin.apiUrl}?action=delete_alert&alert_id=${id}`)
+                .then(res => res.json())
+                .then(d => {
+                    alert("Registro eliminado.");
                     Admin.loadSOSHistory();
                 })
                 .catch(e => alert("Error de conexión"));

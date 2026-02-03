@@ -327,6 +327,23 @@ input:focus {
     background: rgba(139, 92, 246, 0.3);
 }
 
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f43f5e !important;
+}
+
 /* --- MAINTENANCE SWITCH --- */
 .maint-toggle {
     background: rgba(255, 255, 255, 0.05);
