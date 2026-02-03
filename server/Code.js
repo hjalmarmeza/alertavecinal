@@ -1,3 +1,4 @@
+// Versión Final - Todos los parches aplicados (Pepe Luna Fix + No Duplicados)
 function doGet(e) {
     return handleRequest(e);
 }
