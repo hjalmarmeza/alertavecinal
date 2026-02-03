@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Alerta Vecinal</title>
-    <link rel="stylesheet" href="css/style.css?v=premium_v2">
+    <link rel="stylesheet" href="css/style.css?v=premium_feat_1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,8 +138,7 @@
                 <small id="user-addr" style="opacity: 0.7;">...</small>
             </div>
             <!-- Botón Admin (Oculto) -->
-            <button id="btn-admin-access" class="btn-icon-back hidden"
-                onclick="window.location.href='../admin_panel/index.html'"
+            <button id="btn-admin-access" class="btn-icon-back hidden" onclick="App.nav.to('screen-admin')"
                 style="width: 50px; height: 50px; margin-right: 10px; border-radius: 16px; background: rgba(255,165,0,0.2); color: orange;">
                 <span class="material-icons-round">admin_panel_settings</span>
             </button>
@@ -173,6 +172,16 @@
                 <span class="material-icons-round">security</span>
                 <span class="label">Serenazgo</span>
             </button>
+        </div>
+
+        <!-- PANTALLA MANTENIMIENTO (SISTEMA) -->
+        <div id="maintenance-screen" class="maintenance-overlay" style="display: none;">
+            <div class="maint-content">
+                <span class="material-icons-round" style="font-size: 5rem; color: #f59e0b;">settings_suggest</span>
+                <h2>App en Mantenimiento</h2>
+                <p>Estamos trabajando para mejorar tu seguridad. Volvemos en unos minutos.</p>
+                <div class="maint-pulse"></div>
+            </div>
         </div>
 
         <!-- MENU INFERIOR SIMPLIFICADO -->
@@ -261,6 +270,16 @@
             </button>
         </div>
     </div>
+
+    <!-- PANTALLA 4: PANEL DE CONTROL (ADMIN) -->
+    <section id="screen-admin" class="screen" style="padding: 0; background: #0f172a; overflow: hidden; z-index: 9999;">
+        <button onclick="App.nav.to('screen-home')"
+            style="position: fixed; top: 20px; right: 20px; z-index: 10001; background: #f43f5e; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+            <span class="material-icons-round">close</span>
+        </button>
+        <iframe id="admin-iframe" src="about:blank"
+            style="width: 100%; height: 100%; border: none; background: #0f172a;"></iframe>
+    </section>
 
     <script src="js/app.js"></script>
 </body>

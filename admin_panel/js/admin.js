@@ -129,8 +129,16 @@ const Admin = {
 
     toggleMaint: () => {
         const status = document.getElementById('maint-switch').checked;
-        console.log("Mantenimiento:", status);
-        alert(status ? "MODO MANTENIMIENTO ACTIVADO (Bloqueo App)" : "MODO NORMAL ACTIVADO");
+        fetch(Admin.apiUrl + '?action=toggle_maint&status=' + status)
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast(status ? "MODO MANTENIMIENTO ACTIVADO (Bloqueo App)" : "MODO NORMAL ACTIVADO");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(e => alert("Error de conexión con servidor"));
     },
 
     loadUsers: () => {

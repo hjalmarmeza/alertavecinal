@@ -48,11 +48,13 @@ function handleRequest(e) {
         else if (action === "resolve_user") result = resolveUser(params);
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
-        else if (action === "resolve_alert") result = resolveAlert(params); // NUEVO
-        else if (action === "delete_alert") result = deleteAlert(params); // NUEVO BORRAR
+        else if (action === "resolve_alert") result = resolveAlert(params);
+        else if (action === "delete_alert") result = deleteAlert(params);
         else if (action === "report_incident") result = saveIncident(params);
         else if (action === "save_news") result = saveNews(params);
         else if (action === "get_news") result = getNews();
+        else if (action === "toggle_maint") result = toggleMaint(params); // NUEVO
+        else if (action === "get_maint") result = getMaintStatus(); // NUEVO
         else result = { status: "error", message: "Action unknown: " + action };
 
     } catch (error) {
@@ -613,4 +615,26 @@ function cleanSheet(sheetName, dateColIndex, cutoffDate) {
     } else {
         console.log("ℹ️ " + sheetName + ": Todo limpio.");
     }
+}
+
+// --- MANTENIMIENTO ---
+function toggleMaint(p) {
+    try {
+        var status = p.status === "true";
+        PropertiesService.getScriptProperties().setProperty('MAINTENANCE_MODE', status);
+        
+        var msg = status ? 
+            "🔧 MODO MANTENIMIENTO ACTIVADO: La App Vecino estará bloqueada temporalmente para actualizaciones." : 
+            "✅ MODO NORMAL ACTIVADO: La App Vecino vuelve a estar disponible.";
+            
+        sendTelegramMessage(msg);
+        return { status: "success", isMaint: status };
+    } catch(e) {
+        return { status: "error", message: e.toString() };
+    }
+}
+
+function getMaintStatus() {
+    var status = PropertiesService.getScriptProperties().getProperty('MAINTENANCE_MODE') === 'true';
+    return { status: "success", isMaint: status };
 }

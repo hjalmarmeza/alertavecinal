@@ -389,12 +389,87 @@ input:-webkit-autofill:active {
     transition: transform 0.2s, background 0.2s;
 }
 
+.btn-action.police {
+    background: rgba(37, 99, 235, 0.2);
+    border-color: rgba(37, 99, 235, 0.4);
+    color: #60a5fa;
+}
+
+.btn-action.fire {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #f87171;
+}
+
+.btn-action.serenazgo {
+    background: rgba(79, 70, 229, 0.2);
+    border-color: rgba(79, 70, 229, 0.4);
+    color: #818cf8;
+}
+
+.btn-action:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .btn-action span.material-icons-round {
     font-size: 1.8rem;
 }
 
 .btn-action span.label {
     font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* MANTENIMIENTO OVERLAY */
+.maintenance-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(15px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.maint-content h2 {
+    margin: 20px 0 10px;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.maint-content p {
+    color: var(--text-sec);
+    line-height: 1.6;
+}
+
+.maint-pulse {
+    width: 60px;
+    height: 4px;
+    background: #f59e0b;
+    margin: 30px auto;
+    border-radius: 2px;
+    animation: maint-blink 1.5s infinite;
+}
+
+@keyframes maint-blink {
+    0% {
+        opacity: 0.2;
+        transform: scaleX(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0.2;
+        transform: scaleX(0.5);
+    }
 }
 
 /* DOCK NAVIGATION */

@@ -8,6 +8,7 @@ const App = {
         App.nav.init();
         App.panic.init();
         App.gps.init();
+        App.checkMaintenance(); // Verificar si la app está bloqueada
 
         // Listeners for Forms
         const regForm = document.getElementById('form-register');
@@ -19,9 +20,6 @@ const App = {
         const reportForm = document.getElementById('form-report');
         if (reportForm) reportForm.addEventListener('submit', App.handleReport);
 
-        // ... rest of init code
-
-
         // Check Login
         const savedUser = localStorage.getItem('av_user');
         if (savedUser) {
@@ -32,6 +30,23 @@ const App = {
             // INICIAR ESCUCHA ACTIVA DE ALERTAS
             App.monitor.start();
         }
+
+        // Intervalo de mantenimiento (cada 5 min)
+        setInterval(App.checkMaintenance, 300000);
+    },
+
+    checkMaintenance: () => {
+        fetch(App.apiUrl + '?action=get_maint')
+            .then(r => r.json())
+            .then(data => {
+                const overlay = document.getElementById('maintenance-screen');
+                if (data.isMaint) {
+                    overlay.style.display = 'flex';
+                } else {
+                    overlay.style.display = 'none';
+                }
+            })
+            .catch(e => console.error("Err Maint:", e));
     },
 
     updateUI: () => {
@@ -169,6 +184,15 @@ const App = {
                 console.warn(`Screen ${screenId} not found`);
                 return;
             }
+
+            // Si es la pantalla de ADMIN, cargar el iframe si está vacío
+            if (screenId === 'screen-admin') {
+                const iframe = document.getElementById('admin-iframe');
+                if (iframe && iframe.src === 'about:blank') {
+                    iframe.src = '../admin_panel/index.html';
+                }
+            }
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             screen.classList.add('active');
             history.pushState({ screen: screenId }, screenId, `#${screenId}`);
