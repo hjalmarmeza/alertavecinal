@@ -562,15 +562,25 @@ const App = {
                             const card = document.createElement('div');
                             card.className = "news-card";
 
+                            // Validar contenido para evitar "undefined"
+                            const cuerpoTexto = n.cuerpo || "";
+
+                            // Renderizado de la tarjeta
                             card.innerHTML = `
                                 <div class="news-header">
                                     <span class="chip ${tagClass}">${n.tipo || 'COMUNICADO'}</span>
                                     <small style="color:var(--text-sec); font-size:0.75rem;">${date}</small>
                                 </div>
                                 <h3 class="news-title">${n.titulo}</h3>
-                                <div class="news-body">${n.cuerpo}</div>
+                                <div class="news-body" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${cuerpoTexto}</div>
                                 ${imgHtml}
                             `;
+
+                            // CLICK PARA VER DETALLE COMPLETO
+                            card.onclick = () => {
+                                App.news.showDetail(n);
+                            };
+
                             container.appendChild(card);
                         });
 
@@ -593,6 +603,61 @@ const App = {
                 .catch(e => {
                     container.innerHTML = '<div class="header-simple"><h2>Noticias</h2></div><p style="text-align:center; color:#f43f5e; padding:20px;">Error de conexión</p>';
                 });
+        },
+
+        showDetail: (n) => {
+            // Reutilizamos el overlay de alerta roja pero con estilo "INFO" (Azul oscuro/Neutro)
+            // O creamos uno simple al vuelo.
+
+            const overlay = document.createElement('div');
+            overlay.className = 'screen active'; // Usamos clase screen para ocupar todo
+            overlay.style.position = 'fixed';
+            overlay.style.zIndex = '2000';
+            overlay.style.background = 'rgba(15, 23, 42, 0.95)';
+            overlay.style.backdropFilter = 'blur(10px)';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+            overlay.style.padding = '24px';
+
+            let imgFull = "";
+            if (n.imagen && n.imagen.startsWith('http')) {
+                imgFull = `<img src="${n.imagen}" style="width:100%; border-radius:12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">`;
+            }
+
+            const date = new Date(n.fecha).toLocaleString();
+
+            overlay.innerHTML = `
+                <div style="flex:1; overflow-y:auto; padding-bottom:80px;">
+                    <button class="btn-icon-back" style="position:sticky; top:0; background:rgba(255,255,255,0.1); backdrop-filter:blur(5px);">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                    
+                    <span class="chip ${n.tipo === 'ALERTA' ? 'alert' : 'info'}" style="margin-top:10px; display:inline-block;">${n.tipo || 'COMUNICADO'}</span>
+                    
+                    <h1 style="font-size:1.8rem; margin:15px 0 10px; line-height:1.2;">${n.titulo}</h1>
+                    <small style="color:var(--text-sec); display:block; margin-bottom:20px;">${date}</small>
+                    
+                    ${imgFull}
+                    
+                    <div style="font-size:1.1rem; line-height:1.6; color:#e2e8f0; white-space: pre-wrap;">${n.cuerpo || ""}</div>
+                    
+                    ${n.autor ? `<div style="margin-top:30px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); color:var(--text-sec); font-size:0.9rem;">Publicado por: <b>${n.autor}</b></div>` : ''}
+                </div>
+            `;
+
+            // Cerrar al click en botón X
+            overlay.querySelector('button').onclick = () => {
+                overlay.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(overlay), 300);
+            };
+
+            // Animación entrada
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.3s ease';
+            document.body.appendChild(overlay);
+
+            // Trigger reflow
+            setTimeout(() => overlay.style.opacity = '1', 10);
         }
     }
 };

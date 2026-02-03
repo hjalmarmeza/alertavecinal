@@ -712,11 +712,18 @@ input:-webkit-autofill:active {
     width: 100%;
     font-family: inherit;
     font-size: 1rem;
+    text-align: center;
+    /* Centrar texto horizontalmente */
 }
 
 .input-group textarea {
     padding: 10px 0;
     resize: none;
+    height: 100%;
+    /* Centrar verticalmente aproximado con flex en el padre, pero aquí aseguramos layout */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Custom Select Arrow */
@@ -724,6 +731,8 @@ input:-webkit-autofill:active {
     appearance: none;
     -webkit-appearance: none;
     cursor: pointer;
+    text-align-last: center;
+    /* Centrar opciones en algunos navegadores */
 }
 
 /* File Upload Box Premium */
@@ -763,4 +772,11 @@ input:-webkit-autofill:active {
 
 .file-upload-box:hover .material-icons-round {
     color: white;
+}
+
+/* NEWS INTERACTION */
+.news-card {
+    /* ... existing styles ... */
+    cursor: pointer;
+    /* Indicar que es clickeable */
 }
