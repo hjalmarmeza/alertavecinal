@@ -702,3 +702,65 @@ input:-webkit-autofill:active {
     background: rgba(16, 185, 129, 0.3);
     transform: scale(0.9);
 }
+
+/* --- REPORT FORM STYLES --- */
+.input-group select,
+.input-group textarea {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.input-group textarea {
+    padding: 10px 0;
+    resize: none;
+}
+
+/* Custom Select Arrow */
+.input-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* File Upload Box Premium */
+.file-upload-box {
+    background: rgba(30, 41, 59, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.file-upload-box:active {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary);
+    transform: scale(0.98);
+}
+
+.file-upload-box .material-icons-round {
+    font-size: 2.5rem;
+    color: var(--text-sec);
+    transition: color 0.3s;
+}
+
+.file-upload-box p {
+    color: var(--text-sec);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.file-upload-box:hover .material-icons-round {
+    color: white;
+}
