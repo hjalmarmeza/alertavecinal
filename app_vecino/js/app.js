@@ -253,41 +253,26 @@ const App = {
         }
     },
 
-    // --- MONITOR DE ALERTAS (POLLING OPTIMIZADO) ---
+    // --- MONITOR DE ALERTAS (MODO: ON-DEMAND / AHORRO TOTAL) ---
+    // Estrategia: Solo chequear al ABRIR la app o al VOLVER a ella.
+    // No hay consumo pasivo en segundo plano ni bucles infinitos.
     monitor: {
-        interval: null,
         isRedScreenActive: false,
-        baseInterval: 45000, // AUMENTADO A 45s (AHORRO CUOTA)
         currentAlertCoords: null,
-        currentAlertId: null,      // ID de la alerta actual en pantalla
-        lastSeenAlertId: null,     // Última alerta que el usuario cerró ("Enterado")
+        currentAlertId: null,
+        lastSeenAlertId: null,
 
         start: () => {
-            if (App.monitor.interval) clearInterval(App.monitor.interval);
+            // 1. Chequeo inicial al cargar
             App.monitor.check();
-            App.monitor.startLoop();
 
+            // 2. Chequeo al volver a la app (cambio de visibilidad)
             document.addEventListener("visibilitychange", () => {
-                if (document.hidden) {
-                    App.monitor.stopLoop();
-                } else {
+                if (!document.hidden) {
+                    console.log("App en primer plano: Chequeando estado...");
                     App.monitor.check();
-                    App.monitor.startLoop();
                 }
             });
-        },
-
-        startLoop: () => {
-            if (App.monitor.interval) clearInterval(App.monitor.interval);
-            App.monitor.interval = setInterval(() => {
-                const jitter = Math.random() * 2000;
-                setTimeout(App.monitor.check, jitter);
-            }, App.monitor.baseInterval);
-        },
-
-        stopLoop: () => {
-            if (App.monitor.interval) clearInterval(App.monitor.interval);
-            App.monitor.interval = null;
         },
 
         check: () => {
@@ -302,12 +287,16 @@ const App = {
                         const myEmail = App.user ? String(App.user.email).toLowerCase().trim() : '';
                         const alertEmail = data.alert.from_email ? String(data.alert.from_email).toLowerCase().trim() : '';
 
+                        // Filtro: No notificarme mi propia alerta (ya tengo feedback visual del botón)
                         if (myEmail && alertEmail && myEmail === alertEmail) return;
+
+                        // Filtro: Si ya le di "Enterado" a esta alerta específica, no volver a mostrar
                         if (App.monitor.lastSeenAlertId === data.alert.id) return;
 
                         App.monitor.showRedScreen(data.alert);
 
                     } else if (App.monitor.isRedScreenActive) {
+                        // Si ya no hay alerta activa en el servidor, quitar la pantalla roja
                         App.monitor.hideRedScreen(false);
                     }
                 })
