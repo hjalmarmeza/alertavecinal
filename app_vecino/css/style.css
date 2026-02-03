@@ -28,19 +28,18 @@
     display: none !important;
 }
 
-body {
+body,
+html {
     background: radial-gradient(120% 120% at 50% 10%, var(--bg-deep) 40%, #020617 100%);
     color: var(--text-main);
     font-family: 'Inter', system-ui, sans-serif;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     letter-spacing: -0.02em;
-
-    /* CENTRADO PARA PC */
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Opcional: centrar vertical si quieres */
 }
 
 /* FIX: Contenedor tipo Móvil Centrado */
@@ -236,6 +235,7 @@ input:-webkit-autofill:active {
     font-size: 5rem;
     background: -webkit-linear-gradient(45deg, var(--primary), #ffa000);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.4));
 }
@@ -260,6 +260,7 @@ input:-webkit-autofill:active {
     font-weight: 700;
     background: linear-gradient(to right, #fff, #94a3b8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -509,16 +510,22 @@ input:-webkit-autofill:active {
 }
 
 .alert-icon {
-    font-size: 8rem;
+    font-size: 6rem;
     color: white;
     animation: shake 0.5s infinite;
 }
 
+.alert-content {
+    padding: 0 20px;
+    width: 100%;
+}
+
 .alert-content h1 {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
     font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    line-height: 1.2;
 }
 
 .alert-content .btn-white {
