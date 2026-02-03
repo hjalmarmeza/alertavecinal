@@ -1,11 +1,51 @@
 const Admin = {
     apiUrl: 'https://script.google.com/macros/s/AKfycbxMAbrtMKhcr4lygPSuZr_cRibeaEApERysqFbo-lnl_IC3WHDRHKee1VAH9-g4X9OOaw/exec',
 
+    user: null, // Usuario logueado
+
     init: () => {
+        // Verificar Roles y Permisos
+        Admin.checkAuth();
+
         // Cargar datos iniciales
         Admin.loadUsers();
-        // Cargar historial SOS si estamos en esa tab (o precargar)
         Admin.loadSOSHistory();
+    },
+
+    checkAuth: () => {
+        const raw = localStorage.getItem('av_user');
+        if (!raw) {
+            alert("Debes iniciar sesión primero.");
+            window.location.href = '../app_vecino/index.html';
+            return;
+        }
+
+        Admin.user = JSON.parse(raw);
+        const rol = (Admin.user.rol || "").toUpperCase();
+
+        // 1. Validar Acceso Básico
+        if (rol !== 'ADMIN' && rol !== 'PRESIDENTE') {
+            alert("Acceso Denegado: Solo Directiva.");
+            window.location.href = '../app_vecino/index.html';
+            return;
+        }
+
+        // 2. Actualizar UI Perfil
+        const profileName = document.querySelector('.user-profile strong');
+        if (profileName) profileName.innerText = Admin.user.familia;
+        const profileRole = document.querySelector('.user-profile small');
+        if (profileRole) profileRole.innerText = rol;
+
+        // 3. SUPER PODER DEL ADMIN (Modo Mantenimiento y Config)
+        if (rol === 'PRESIDENTE') {
+            // Ocultar Switch Mantenimiento
+            const maintDiv = document.querySelector('.maint-toggle');
+            if (maintDiv) maintDiv.style.display = 'none'; // Desaparece para el presidente
+
+            // Ocultar Tab Configuración
+            const configBtn = document.querySelector('button[onclick="Admin.nav(\'tab-config\')"]');
+            if (configBtn) configBtn.style.display = 'none';
+        }
     },
 
     nav: (tabId) => {
