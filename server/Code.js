@@ -268,8 +268,8 @@ function resolveUser(p) {
     var data = sheet.getDataRange().getValues();
 
     for (var i = 1; i < data.length; i++) {
-        // Col 0 es ID
-        if (data[i][0] == p.user_id) {
+        // Col 0 es ID. Forzamos String y Trim para evitar fallos de coincidencia
+        if (String(data[i][0]).trim() == String(p.user_id).trim()) {
 
             // OBLIGATORIO: Escritura explícita para evitar ambigüedades
             if (p.status === 'ACTIVO') {
@@ -285,7 +285,7 @@ function resolveUser(p) {
             // FORCE SAVE (Vital para ver cambios inmediatos)
             SpreadsheetApp.flush();
 
-            return { status: "success", message: "Usuario actualizado a " + p.status };
+            return { status: "success", message: "Usuario actualizado a " + p.status + " en fila " + (i + 1) };
         }
     }
     return { status: "error", message: "ID no encontrado" };
