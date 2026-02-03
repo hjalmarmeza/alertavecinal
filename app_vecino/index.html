@@ -218,10 +218,50 @@
 
     <section id="screen-report" class="screen">
         <div class="header-simple">
-            <h2>Reportar</h2>
+            <h2>Reportar Incidente</h2>
         </div>
         <div class="scroll-content">
-            <p>Formulario de Reportes...</p>
+            <form id="form-report">
+                <div class="input-group">
+                    <span class="material-icons-round">category</span>
+                    <select id="report-type" required style="text-transform: uppercase;">
+                        <option value="" disabled selected>Tipo de Incidente</option>
+                        <option value="SOSPECHOSO">Persona Sospechosa</option>
+                        <option value="ROBO">Robo / Asalto</option>
+                        <option value="RUIDO">Ruidos Molestos</option>
+                        <option value="BASURA">Basura / Limpieza</option>
+                        <option value="ALUMBRADO">Alumbrado Público</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-round"
+                        style="align-self: flex-start; margin-top: 10px;">description</span>
+                    <textarea id="report-desc" rows="4" placeholder="Describe brevemente lo sucedido..."
+                        required></textarea>
+                </div>
+
+                <div class="file-upload-box" onclick="document.getElementById('report-photo').click()">
+                    <span class="material-icons-round" id="upload-icon">add_a_photo</span>
+                    <p id="upload-text">Toca para agregar foto (Opcional)</p>
+                    <input type="file" id="report-photo" accept="image/*" hidden
+                        onchange="App.report.previewImage(this)">
+                </div>
+                <div id="image-preview-container" class="hidden" style="margin-bottom: 20px; text-align: center;">
+                    <img id="image-preview" src=""
+                        style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1);">
+                    <button type="button" onclick="App.report.clearImage()"
+                        style="background: none; border: none; color: #f43f5e; margin-top: 5px; font-size: 0.9rem;">Eliminar
+                        Foto</button>
+                </div>
+
+                <!-- Hidden Coords for Report -->
+                <input type="hidden" id="report-coords">
+
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">ENVIAR REPORTE</button>
+            </form>
+            <div style="height: 100px;"></div>
         </div>
         <nav class="bottom-nav">
             <button class="nav-item" onclick="App.nav.to('screen-home')"><span

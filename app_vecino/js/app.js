@@ -16,6 +16,12 @@ const App = {
         const loginForm = document.getElementById('form-login');
         if (loginForm) loginForm.addEventListener('submit', App.handleLogin);
 
+        const reportForm = document.getElementById('form-report');
+        if (reportForm) reportForm.addEventListener('submit', App.handleReport);
+
+        // ... rest of init code
+
+
         // Check Login
         const savedUser = localStorage.getItem('av_user');
         if (savedUser) {
@@ -413,6 +419,114 @@ const App = {
     call: (number) => {
         if (number === 'admin') number = '999999999';
         window.location.href = `tel:${number}`;
+    },
+
+    handleReport: (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+
+        btn.innerText = "ENVIANDO...";
+        btn.disabled = true;
+
+        const type = document.getElementById('report-type').value;
+        const desc = document.getElementById('report-desc').value;
+        const imageBase64 = App.report.currentImageBase64 || "";
+
+        const data = {
+            action: 'report_incident',
+            user_id: App.user ? App.user.email : 'anon',
+            familia: App.user ? App.user.familia : 'Vecino',
+            tipo: type,
+            descripcion: desc,
+            imagen: imageBase64,
+            coords: App.gps.current || ""
+        };
+
+        // Send to Backend
+        fetch(App.apiUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(data)
+        })
+            .then(() => {
+                alert("✅ Reporte enviado correctamente.");
+                btn.innerText = "ENVIADO";
+                document.getElementById('form-report').reset();
+                App.report.clearImage();
+
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    App.nav.to('screen-home');
+                }, 1000);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error al enviar reporte.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+    },
+
+    // --- REPORTAR CON FOTO ---
+    report: {
+        currentImageBase64: null,
+
+        previewImage: (input) => {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    // Mostrar preview
+                    const img = document.getElementById('image-preview');
+                    img.src = e.target.result;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                    document.querySelector('.file-upload-box').style.display = 'none';
+
+                    // Convertir y Comprimir a Base64
+                    App.report.compressImage(img, (base64) => {
+                        App.report.currentImageBase64 = base64;
+                        console.log("Imagen procesada. Longitud: " + base64.length);
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+
+        clearImage: () => {
+            document.getElementById('report-photo').value = "";
+            document.getElementById('image-preview').src = "";
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.querySelector('.file-upload-box').style.display = 'flex';
+            App.report.currentImageBase64 = null;
+        },
+
+        compressImage: (imgElement, callback) => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800; // Limitar ancho para reducir tamaño
+            const scaleSize = MAX_WIDTH / imgElement.width;
+
+            // Si es más pequeña, no redimensionar
+            let newWidth = imgElement.width;
+            let newHeight = imgElement.height;
+
+            if (scaleSize < 1) {
+                newWidth = MAX_WIDTH;
+                newHeight = imgElement.height * scaleSize;
+            }
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(imgElement, 0, 0, newWidth, newHeight);
+
+            // Exportar a JPG con calidad reducida (0.6)
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+            callback(dataUrl);
+        }
     },
 
     // --- NOTICIAS ---
