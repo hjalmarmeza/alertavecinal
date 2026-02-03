@@ -277,11 +277,15 @@ function resolveUser(p) {
             // Para quitar un posible "PENDIENTE" que se hubiera guardado mal ahí por error de versión.
             if (p.status === 'ACTIVO') {
                 var currentRol = sheet.getRange(i + 1, 12).getValue();
+                var currentRolClean = String(currentRol).trim().toUpperCase();
                 // Si está vacío O si pone "PENDIENTE" (error viejo), lo forzamos a VECINO
-                if (!currentRol || currentRol === "PENDIENTE") {
+                if (!currentRol || currentRolClean === "PENDIENTE") {
                     sheet.getRange(i + 1, 12).setValue("VECINO");
                 }
             }
+
+            // FORCE SAVE (Vital para ver cambios inmediatos)
+            SpreadsheetApp.flush();
 
             return { status: "success", message: "Usuario actualizado a " + p.status };
         }
