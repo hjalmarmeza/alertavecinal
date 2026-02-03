@@ -301,8 +301,8 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     position: relative;
-    max-height: 50vh;
-    /* Limitar altura para evitar empujar todo */
+    max-height: 40vh;
+    /* Reduced to release space */
 }
 
 .pulse-button {
@@ -362,9 +362,10 @@ input:-webkit-autofill:active {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     padding: 0 24px;
-    margin-bottom: 130px;
-    /* AUMENTADO - PREVENTS NAV OVERLAP */
-    margin-top: auto;
+    margin-bottom: 160px !important;
+    /* AGGRESSIVE SPACING */
+    margin-top: 20px;
+    /* Use static spacing */
     position: relative;
     z-index: 60;
     /* Force visibility */
