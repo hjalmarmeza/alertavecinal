@@ -221,8 +221,8 @@ var PROP_CHAT = PropertiesService.getScriptProperties().getProperty('TELEGRAM_CH
 // =========================================================
 // CAMBIAR AQUI TU TOKEN Y CHAT ID SI NO USAS PROPERTIES
 // =========================================================
-var TELEGRAM_BOT_TOKEN = PROP_TOKEN || "TU_TOKEN_AQUI";
-var TELEGRAM_CHAT_ID = PROP_CHAT || "TU_CHAT_ID_AQUI";
+var TELEGRAM_BOT_TOKEN = PROP_TOKEN || "PON_AQUI_TU_TOKEN";
+var TELEGRAM_CHAT_ID = PROP_CHAT || "PON_AQUI_TU_CHAT_ID";
 // =========================================================
 
 function saveAlert(p) {
@@ -622,14 +622,14 @@ function toggleMaint(p) {
     try {
         var status = p.status === "true";
         PropertiesService.getScriptProperties().setProperty('MAINTENANCE_MODE', status);
-        
-        var msg = status ? 
-            "🔧 MODO MANTENIMIENTO ACTIVADO: La App Vecino estará bloqueada temporalmente para actualizaciones." : 
+
+        var msg = status ?
+            "🔧 MODO MANTENIMIENTO ACTIVADO: La App Vecino estará bloqueada temporalmente para actualizaciones." :
             "✅ MODO NORMAL ACTIVADO: La App Vecino vuelve a estar disponible.";
-            
+
         sendTelegramMessage(msg);
         return { status: "success", isMaint: status };
-    } catch(e) {
+    } catch (e) {
         return { status: "error", message: e.toString() };
     }
 }
