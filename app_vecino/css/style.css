@@ -307,14 +307,13 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     position: relative;
-    max-height: 40vh;
-    /* Reduced to release space */
+    max-height: none;
+    min-height: 40vh;
 }
 
 .pulse-button {
-    width: min(200px, 55vw);
-    /* Reducido de 280px */
-    height: min(200px, 55vw);
+    width: min(260px, 70vw);
+    height: min(260px, 70vw);
     border-radius: 50%;
     background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, transparent 70%);
     border: 1px solid rgba(244, 63, 94, 0.2);
@@ -339,9 +338,8 @@ input:-webkit-autofill:active {
 }
 
 .inner-circle {
-    width: min(160px, 45vw);
-    /* Reducido de 220px */
-    height: min(160px, 45vw);
+    width: min(200px, 55vw);
+    height: min(200px, 55vw);
     background: radial-gradient(circle at 30% 30%, #fb7185, #e11d48);
     border-radius: 50%;
     display: flex;
@@ -368,10 +366,10 @@ input:-webkit-autofill:active {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     padding: 0 24px;
-    margin-bottom: 160px !important;
-    /* AGGRESSIVE SPACING */
-    margin-top: 20px;
-    /* Use static spacing */
+    margin-bottom: 20px !important;
+    /* Space above dock */
+    margin-top: auto;
+    /* Push to bottom */
     position: relative;
     z-index: 60;
     /* Force visibility */
@@ -402,16 +400,18 @@ input:-webkit-autofill:active {
 /* DOCK NAVIGATION */
 .bottom-nav {
     position: absolute;
-    bottom: 20px;
-    /* Un poco mas abajo */
-    left: 20px;
-    right: 20px;
+    bottom: 30px;
+    left: 24px;
+    right: 24px;
     height: auto;
-    padding: 8px 0;
-    background: rgba(15, 23, 42, 0.95);
-    /* Mas solido */
-    justify-content: space-evenly;
-    /* Mejor distribucion */
+    padding: 12px 0;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: space-around;
     align-items: center;
     z-index: 70;
 }
