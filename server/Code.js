@@ -215,8 +215,12 @@ function saveIncident(p) {
 var PROP_TOKEN = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
 var PROP_CHAT = PropertiesService.getScriptProperties().getProperty('TELEGRAM_CHAT_ID');
 
+// =========================================================
+// CAMBIAR AQUI TU TOKEN Y CHAT ID SI NO USAS PROPERTIES
+// =========================================================
 var TELEGRAM_BOT_TOKEN = PROP_TOKEN || "TU_TOKEN_AQUI";
 var TELEGRAM_CHAT_ID = PROP_CHAT || "TU_CHAT_ID_AQUI";
+// =========================================================
 
 function saveAlert(p) {
     var sheet = getSheet("Alertas");
