@@ -48,6 +48,7 @@ function handleRequest(e) {
         else if (action === "resolve_user") result = resolveUser(params); // Nuevo
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
+        else if (action === "report_incident") result = saveIncident(params); // Nuevo Handler
         else if (action === "save_news") result = saveNews(params); // Rutas Noticias
         else if (action === "get_news") result = getNews();         // Rutas Noticias
         else result = { status: "error", message: "Action unknown: " + action };
@@ -141,6 +142,50 @@ function getAlerts() {
         });
     }
     return { status: "success", data: alerts };
+}
+
+function saveIncident(p) {
+    var sheet = getSheet("Reportes");
+
+    // Guardar en Sheet
+    // ID, Fecha, UserID, Familia, Tipo, Descripción, GPS, ImagenBase64
+    var rowData = [
+        guid(),
+        new Date(),
+        p.user_id,
+        p.familia,
+        p.tipo,
+        p.descripcion,
+        p.coords,
+        p.imagen ? "IMAGEN (VER CELDA)" : "SIN FOTO"
+    ];
+
+    // Si hay imagen, la guardamos. Google Sheets tiene límite de 50k caracteres aprox en celdas, 
+    // pero a veces aguanta más. Una imagen comprimida base64 suele ser ~20-30kb.
+    if (p.imagen) {
+        rowData[7] = p.imagen;
+    }
+
+    sheet.appendRow(rowData);
+
+    // NOTIFICAR TELEGRAM (Moderado)
+    try {
+        var icon = "📝";
+        if (p.tipo === "ROBO" || p.tipo === "SOSPECHOSO") icon = "🚨";
+
+        var mapLink = "https://maps.google.com/?q=" + p.coords;
+        var mensaje = icon + " REPORTE VECINAL (" + p.tipo + ")\n\n" +
+            "👤 " + p.familia + "\n" +
+            "📄 " + p.descripcion + "\n" +
+            "📍 Ubicación: " + mapLink + "\n" +
+            "⏰ " + new Date().toLocaleTimeString();
+
+        sendTelegramMessage(mensaje);
+    } catch (e) {
+        console.error("Error Telegram Reporte: " + e.toString());
+    }
+
+    return { status: "success", message: "Reporte registrado" };
 }
 
 // --- CONFIGURACION TELEGRAM (VERSION SEGURA GITHUB) ---
@@ -325,6 +370,7 @@ function getSheet(name) {
         sheet = ss.insertSheet(name);
         if (name === "Usuarios") sheet.appendRow(["ID", "Email", "Password", "Nombre", "Familia", "Urbanización", "Dirección", "Mz", "Lote", "GPS", "Fecha Registro", "Estado"]);
         if (name === "Alertas") sheet.appendRow(["ID", "Usuario", "Tipo", "GPS", "Fecha", "Estado"]);
+        if (name === "Reportes") sheet.appendRow(["ID", "Fecha", "Usuario", "Familia", "Tipo", "Descripción", "GPS", "Imagen"]);
     }
     return sheet;
 }
