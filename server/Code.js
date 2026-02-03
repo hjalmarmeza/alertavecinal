@@ -270,18 +270,16 @@ function resolveUser(p) {
     for (var i = 1; i < data.length; i++) {
         // Col 0 es ID
         if (data[i][0] == p.user_id) {
-            // Actualizar Estado en Columna 13 (Indice 12 -> Col 13)
-            sheet.getRange(i + 1, 13).setValue(p.status);
 
-            // Si aprobamos, aseguramos que la Columna 12 (Rol/Viejo Estado) sea un Rol válido
-            // Para quitar un posible "PENDIENTE" que se hubiera guardado mal ahí por error de versión.
+            // OBLIGATORIO: Escritura explícita para evitar ambigüedades
             if (p.status === 'ACTIVO') {
-                var currentRol = sheet.getRange(i + 1, 12).getValue();
-                var currentRolClean = String(currentRol).trim().toUpperCase();
-                // Si está vacío O si pone "PENDIENTE" (error viejo), lo forzamos a VECINO
-                if (!currentRol || currentRolClean === "PENDIENTE") {
-                    sheet.getRange(i + 1, 12).setValue("VECINO");
-                }
+                // Columna 12 (L) -> ROL = VECINO
+                sheet.getRange(i + 1, 12).setValue("VECINO");
+                // Columna 13 (M) -> ESTADO = ACTIVO
+                sheet.getRange(i + 1, 13).setValue("ACTIVO");
+            } else {
+                // Si bloquemos o pendiente, solo actualizamos Estado en Col 13
+                sheet.getRange(i + 1, 13).setValue(p.status);
             }
 
             // FORCE SAVE (Vital para ver cambios inmediatos)
