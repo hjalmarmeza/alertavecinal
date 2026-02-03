@@ -48,7 +48,7 @@ function handleRequest(e) {
         else if (action === "resolve_user") result = resolveUser(params); // Nuevo
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
-        else if (action === "report_incident") result = saveIncident(params); // Nuevo Handler
+        else if (action === "report_incident") result = saveIncident(params); // Nuevo Handler Reportes
         else if (action === "save_news") result = saveNews(params); // Rutas Noticias
         else if (action === "get_news") result = getNews();         // Rutas Noticias
         else result = { status: "error", message: "Action unknown: " + action };
@@ -147,8 +147,7 @@ function getAlerts() {
 function saveIncident(p) {
     var sheet = getSheet("Reportes");
 
-    // Guardar en Sheet
-    // ID, Fecha, UserID, Familia, Tipo, Descripción, GPS, ImagenBase64
+    // Guardar en Sheet REPORTES (Privado Admin)
     var rowData = [
         guid(),
         new Date(),
@@ -160,15 +159,34 @@ function saveIncident(p) {
         p.imagen ? "IMAGEN (VER CELDA)" : "SIN FOTO"
     ];
 
-    // Si hay imagen, la guardamos. Google Sheets tiene límite de 50k caracteres aprox en celdas, 
-    // pero a veces aguanta más. Una imagen comprimida base64 suele ser ~20-30kb.
+    // Guardar imagen si existe
     if (p.imagen) {
         rowData[7] = p.imagen;
     }
-
     sheet.appendRow(rowData);
 
-    // NOTIFICAR TELEGRAM (Moderado)
+    // NUEVO: PUBLICAR AUTOMÁTICAMENTE EN NOTICIAS (Para que se vea en la App)
+    try {
+        // Solo publicamos incidentes "públicos", no privados ni basura doméstica, etc.
+        // O publicamos todos. Por ahora TODO para que veas el resultado.
+        var newsSheet = getSheet("Noticias");
+        // ID, Titulo, Cuerpo, Fecha, Imagen, Autor, Tipo 
+        var tipoNoticia = (p.tipo === "ROBO" || p.tipo === "SOSPECHOSO") ? "ALERTA" : "INFO";
+
+        newsSheet.appendRow([
+            guid(),
+            "⚠️ VECINO REPORTA: " + p.tipo,
+            p.descripcion + "\n\n(Reportado por: " + p.familia + ")",
+            new Date(),
+            "", // No ponemos la foto en noticias público automáticamente para no saturar, pero se podría.
+            p.familia
+        ]);
+
+    } catch (e) {
+        console.error("Error publicando noticia auto: " + e);
+    }
+
+    // NOTIFICAR TELEGRAM (Admin)
     try {
         var icon = "📝";
         if (p.tipo === "ROBO" || p.tipo === "SOSPECHOSO") icon = "🚨";
@@ -185,7 +203,7 @@ function saveIncident(p) {
         console.error("Error Telegram Reporte: " + e.toString());
     }
 
-    return { status: "success", message: "Reporte registrado" };
+    return { status: "success", message: "Reporte registrado y publicado" };
 }
 
 // --- CONFIGURACION TELEGRAM (VERSION SEGURA GITHUB) ---
