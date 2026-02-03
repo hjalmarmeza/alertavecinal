@@ -370,23 +370,6 @@ function findUserByEmail(email) {
     return null;
 }
 
-function resolveUser(p) {
-    // p.user_id = ID único, p.status = 'ACTIVO' o 'BLOQUEADO'
-    var sheet = getSheet("Usuarios");
-    var data = sheet.getDataRange().getValues();
-
-    for (var i = 1; i < data.length; i++) {
-        // Col 0 es ID
-        if (data[i][0] == p.user_id) {
-            // Col 11 es Estado (Indice 11 -> Columna L)
-            // sheet.getRange(row, col) es 1-indexed
-            // Fila es i+1
-            sheet.getRange(i + 1, 12).setValue(p.status);
-            return { status: "success", message: "Usuario actualizado a " + p.status };
-        }
-    }
-    return { status: "error", message: "ID no encontrado" };
-}
 
 // --- NOTICIAS ---
 function saveNews(p) {
