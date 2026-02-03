@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel de Control - Alerta Vecinal</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=premium_2.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
     <div class="dashboard-container">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+        <!-- SIDEBAR (DESKTOP ONLY) -->
+        <aside class="sidebar desktop-only">
             <div class="brand">
                 <span class="material-icons-round">security</span>
                 <h2>GESTIÓN</h2>
@@ -49,11 +49,17 @@
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
+            <!-- MOBILE HEADER -->
             <header class="top-bar">
-                <h2 id="page-title">Usuarios</h2>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="material-icons-round mobile-only"
+                        style="color:var(--primary); font-size:1.5rem;">security</span>
+                    <h2 id="page-title">Usuarios</h2>
+                </div>
+
                 <div class="actions">
                     <div class="maint-toggle">
-                        <span>Modo Mantenimiento</span>
+                        <span class="desktop-only">Modo Mantenimiento</span>
                         <label class="switch">
                             <input type="checkbox" id="maint-switch" onchange="Admin.toggleMaint()">
                             <span class="slider round"></span>
@@ -61,6 +67,9 @@
                     </div>
                 </div>
             </header>
+
+            <!-- ... CONTENT TABS (UNCHANGED logic, just styling) ... -->
+            <!-- We will rely on existing IDs tab-users, tab-sos, etc. -->
 
             <!-- TAB: USUARIOS -->
             <div id="tab-users" class="content-tab active">
@@ -77,38 +86,26 @@
                         </thead>
                         <tbody id="pending-users-list">
                             <!-- JS insertará filas -->
-                            <tr>
-                                <td>Juan Pérez</td>
-                                <td>Familia Pérez</td>
-                                <td>Mz C Lote 4</td>
-                                <td>
-                                    <button class="btn-sm green">Aprobar</button>
-                                    <button class="btn-sm red">Rechazar</button>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- USUARIOS ACTIVOS (NUEVA SECCIÓN) -->
+                <!-- USUARIOS ACTIVOS -->
                 <div class="card" style="margin-top: 25px;">
                     <h3>Padrón de Vecinos Activos</h3>
-                    <input type="text" id="search-active" placeholder="Buscar por Nombre o Familia..."
-                        onkeyup="Admin.filterActiveUsers()"
-                        style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                    <input type="text" id="search-active" placeholder="Buscar..." onkeyup="Admin.filterActiveUsers()">
 
-                    <div style="max-height: 400px; overflow-y: auto;">
+                    <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Vecino</th>
                                     <th>Ubicación</th>
-                                    <th>Estado</th>
                                     <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="active-users-list">
-                                <!-- JS insertará filas -->
+                                <!-- JS -->
                             </tbody>
                         </table>
                     </div>
@@ -118,14 +115,12 @@
             <!-- TAB: HISTORIAL SOS -->
             <div id="tab-sos" class="content-tab">
                 <div class="card">
-                    <h3>Registro de Pánicos Activados</h3>
-                    <p style="color:#64748b;">Mostrando las últimas alertas (Lectura desde Servidor)</p>
+                    <h3>Registro de Pánicos</h3>
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Familia</th>
-                                <th>Tipo</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -136,8 +131,31 @@
                 </div>
             </div>
 
+            <div id="tab-config" class="content-tab" style="display:none; color:white;">
+                <div class="card">
+                    <h3>Configuración Avanzada</h3>
+                    <p>Opciones del sistema...</p>
+                </div>
+            </div>
+
         </main>
     </div>
+
+    <!-- MOBILE BOTTOM NAV (PREMIUM APP STYLE) -->
+    <nav class="mobile-nav mobile-only">
+        <button class="nav-btn active" onclick="Admin.nav('tab-users')">
+            <span class="material-icons-round">people</span>
+            <span>Usuarios</span>
+        </button>
+        <button class="nav-btn" onclick="Admin.nav('tab-sos')">
+            <span class="material-icons-round">warning_amber</span>
+            <span>Alertas</span>
+        </button>
+        <button class="nav-btn" onclick="Admin.nav('tab-config')">
+            <span class="material-icons-round">settings</span>
+            <span>Ajustes</span>
+        </button>
+    </nav>
 
     <script src="js/admin.js"></script>
 </body>
