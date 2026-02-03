@@ -533,3 +533,48 @@ function testTelegram() {
         console.error("❌ ERROR: Revisa el Chat ID o los permisos del Bot.");
     }
 }
+
+// --- TAREA PROGRAMADA: LIMPIEZA SEMANAL ---
+// Configurar un Trigger (Activador) de tiempo: "Por día" -> "Medianoche"
+function cleanupOldData() {
+    // Dias a conservar
+    var DAYS_TO_KEEP = 7;
+    var cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - DAYS_TO_KEEP);
+
+    console.log("🧹 Iniciando Limpieza. Borrando anteriores a: " + cutoffDate.toDateString());
+
+    cleanSheet("Alertas", 4, cutoffDate);  // Index 4 = Columna E (Fecha)
+    cleanSheet("Reportes", 1, cutoffDate); // Index 1 = Columna B (Fecha)
+    cleanSheet("Noticias", 3, cutoffDate); // Index 3 = Columna D (Fecha)
+}
+
+function cleanSheet(sheetName, dateColIndex, cutoffDate) {
+    var sheet = getSheet(sheetName);
+    var data = sheet.getDataRange().getValues();
+
+    // Recorremos de ABAJO hacia ARRIBA para poder borrar sin alterar índices
+    // Saltamos header (fila 0)
+    var deletedCount = 0;
+
+    for (var i = data.length - 1; i >= 1; i--) {
+        var row = data[i];
+        var dateCell = row[dateColIndex]; // La fecha
+
+        // Intentar parsear fecha
+        if (dateCell) {
+            var rowDate = new Date(dateCell);
+            // Si es válida y es mas antigua que cutoff
+            if (!isNaN(rowDate.getTime()) && rowDate < cutoffDate) {
+                sheet.deleteRow(i + 1); // +1 porque sheet es 1-based
+                deletedCount++;
+            }
+        }
+    }
+
+    if (deletedCount > 0) {
+        console.log("✅ " + sheetName + ": Se borraron " + deletedCount + " registros antiguos.");
+    } else {
+        console.log("ℹ️ " + sheetName + ": Todo limpio.");
+    }
+}
