@@ -88,12 +88,19 @@ function registerUser(p) {
 function getUsers() {
     var sheet = getSheet("Usuarios");
     var data = sheet.getDataRange().getValues();
-    var headers = data[0];
     var users = [];
     // Data starts row 1
     for (var i = 1; i < data.length; i++) {
         var row = data[i];
         if (!row[0]) continue; // Skip empty
+
+        // STATUS INTELIGENTE: Leer Col 13 (Index 12) o Col 12 (Index 11) fallback
+        var st = row[12];
+        if (!st && row[11] === "PENDIENTE") st = "PENDIENTE";
+        if (!st && row[11] === "ACTIVO") st = "ACTIVO";
+        // Si sigue vacío, usar lo que haya en Col 11 aunque sea rol (mejor que nada)
+        if (!st) st = row[11];
+
         users.push({
             id: row[0],
             email: row[1],
@@ -102,7 +109,7 @@ function getUsers() {
             direccion: row[6],
             mz: row[7],
             lote: row[8],
-            status: row[11]
+            status: st // Status REAL detectado
         });
     }
     return { status: "success", data: users };
@@ -266,10 +273,14 @@ function resolveUser(p) {
             // Actualizar Estado en Columna 13 (Indice 12 -> Col 13)
             sheet.getRange(i + 1, 13).setValue(p.status);
 
-            // Si aprobamos y no tiene rol, asignar VECINO por defecto en Col 12
+            // Si aprobamos, aseguramos que la Columna 12 (Rol/Viejo Estado) sea un Rol válido
+            // Para quitar un posible "PENDIENTE" que se hubiera guardado mal ahí por error de versión.
             if (p.status === 'ACTIVO') {
                 var currentRol = sheet.getRange(i + 1, 12).getValue();
-                if (!currentRol) sheet.getRange(i + 1, 12).setValue("VECINO");
+                // Si está vacío O si pone "PENDIENTE" (error viejo), lo forzamos a VECINO
+                if (!currentRol || currentRol === "PENDIENTE") {
+                    sheet.getRange(i + 1, 12).setValue("VECINO");
+                }
             }
 
             return { status: "success", message: "Usuario actualizado a " + p.status };
