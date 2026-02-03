@@ -49,17 +49,17 @@ function handleRequest(e) {
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
         else if (action === "resolve_alert") result = resolveAlert(params); // NUEVO
+        else if (action === "delete_alert") result = deleteAlert(params); // NUEVO BORRAR
         else if (action === "report_incident") result = saveIncident(params);
         else if (action === "save_news") result = saveNews(params);
         else if (action === "get_news") result = getNews();
         else result = { status: "error", message: "Action unknown: " + action };
 
     } catch (error) {
-        result = { status: "error", message: error.toString(), stack: error.stack };
+        return { status: "error", message: error.toString() };
     }
 
-    output.setContent(JSON.stringify(result));
-    return output.setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
 }
 
 // --- FUNCIONES CORE ---
@@ -407,6 +407,19 @@ function resolveAlert(p) {
         }
     }
     return { status: "error", message: "Alerta ID no encontrada" };
+}
+
+function deleteAlert(p) {
+    var sheet = getSheet("Alertas");
+    var data = sheet.getDataRange().getValues();
+
+    for (var i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() == String(p.alert_id).trim()) {
+            sheet.deleteRow(i + 1);
+            return { status: "success", message: "Alerta eliminada" };
+        }
+    }
+    return { status: "error", message: "ID no encontrado" };
 }
 
 
