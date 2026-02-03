@@ -408,8 +408,18 @@ function checkStatus() {
     var sheet = getSheet("Alertas");
     var lastRow = sheet.getLastRow();
 
+    // --- OPTIMIZACION DE CUOTA: Chequear Noticias en la misma petición ---
+    var lastNewsId = "";
+    try {
+        var newsSheet = getSheet("Noticias");
+        if (newsSheet.getLastRow() > 1) {
+            // Asumiendo que ID está en Columna A (Indice 1)
+            lastNewsId = newsSheet.getRange(newsSheet.getLastRow(), 1).getValue();
+        }
+    } catch (e) { }
+
     // Si solo hay headers, nada
-    if (lastRow < 2) return { status: "success", alert: null };
+    if (lastRow < 2) return { status: "success", alert: null, lastNewsId: lastNewsId };
 
     // Obtener última alerta: [ID, Usuario, Tipo, GPS, Fecha, Estado]
     // Ojo: obtener datos masivamente es mejor, pero aquí queremos lo último rápido
@@ -440,11 +450,12 @@ function checkStatus() {
                 address: userInfo ? "Mz " + userInfo.mz + " Lt " + userInfo.lote : "Ubicación GPS",
                 coords: row[3],
                 time: row[4]
-            }
+            },
+            lastNewsId: lastNewsId // <-- PIGGYBACK NEWS
         };
     }
 
-    return { status: "success", alert: null };
+    return { status: "success", alert: null, lastNewsId: lastNewsId };
 }
 
 function findUserByEmail(email) {

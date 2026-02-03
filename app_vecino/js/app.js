@@ -257,7 +257,7 @@ const App = {
     monitor: {
         interval: null,
         isRedScreenActive: false,
-        baseInterval: 20000,
+        baseInterval: 45000, // AUMENTADO A 45s (AHORRO CUOTA)
         currentAlertCoords: null,
         currentAlertId: null,      // ID de la alerta actual en pantalla
         lastSeenAlertId: null,     // Última alerta que el usuario cerró ("Enterado")
@@ -297,31 +297,25 @@ const App = {
             fetch(`${App.apiUrl}?action=check_status&t=${timestamp}`)
                 .then(res => res.json())
                 .then(data => {
+                    // 1. CHEQUEO DE ALERTAS
                     if (data.status === 'success' && data.alert) {
-
-                        // --- FILTROS DE ALERTA ---
-
-                        // 1. Filtrar si soy yo mismo (evitar auto-susto)
                         const myEmail = App.user ? String(App.user.email).toLowerCase().trim() : '';
                         const alertEmail = data.alert.from_email ? String(data.alert.from_email).toLowerCase().trim() : '';
 
-                        // Si la alerta viene de mí, la ignoro (ya vi mi confirmación de envío)
-                        if (myEmail && alertEmail && myEmail === alertEmail) {
-                            return;
-                        }
+                        if (myEmail && alertEmail && myEmail === alertEmail) return;
+                        if (App.monitor.lastSeenAlertId === data.alert.id) return;
 
-                        // 2. Filtrar si ya vi esta alerta específica (Baneada por ID)
-                        if (App.monitor.lastSeenAlertId === data.alert.id) {
-                            return; // Ya pulsé "Enterado", no volver a mostrar
-                        }
-
-                        // Si pasa los filtros, mostrar
                         App.monitor.showRedScreen(data.alert);
 
                     } else if (App.monitor.isRedScreenActive) {
-                        // Si el servidor ya NO reporta alerta (se canceló o expiró), cerrar pantalla
-                        // Pasamos false para NO marcarla como "vista por el usuario", simplemente desapareció
                         App.monitor.hideRedScreen(false);
+                    }
+
+                    // 2. CHEQUEO DE NOTICIAS (PIGGYBACK)
+                    // Si el ID de la última noticia cambió, recargar noticias silenciosamente
+                    if (data.lastNewsId && App.news.lastIdKnown && data.lastNewsId !== App.news.lastIdKnown) {
+                        console.log("Nueva noticia detectada (Monitor). Recargando...");
+                        App.news.load(true);
                     }
                 })
                 .catch(e => console.error("Monitor network error (silenced)"));
@@ -332,7 +326,7 @@ const App = {
 
             App.monitor.isRedScreenActive = true;
             App.monitor.currentAlertCoords = alertData.coords;
-            App.monitor.currentAlertId = alertData.id; // Guardamos ID actual
+            App.monitor.currentAlertId = alertData.id;
 
             const overlay = document.getElementById('red-alert-overlay');
 
@@ -351,7 +345,6 @@ const App = {
         },
 
         hideRedScreen: (userAck = true) => {
-            // Si el usuario confirma (userAck=true), bloqueamos este ID para siempre (mientras dure la sesión)
             if (userAck && App.monitor.currentAlertId) {
                 App.monitor.lastSeenAlertId = App.monitor.currentAlertId;
             }
@@ -531,7 +524,7 @@ const App = {
 
     // --- NOTICIAS ---
     news: {
-        interval: null,
+        lastIdKnown: null, // Para comparar con el monitor y saber si recargar
 
         load: (silent = false) => {
             const container = document.querySelector('#screen-feed .scroll-content');
@@ -546,6 +539,12 @@ const App = {
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success' && data.data.length > 0) {
+
+                        // Guardar referencia de la última noticia para el monitor "Piggyback"
+                        // Asumimos que la primera en la lista es la más reciente
+                        if (data.data[0] && data.data[0].id) {
+                            App.news.lastIdKnown = data.data[0].id;
+                        }
 
                         if (!silent || (silent && container.innerHTML)) container.innerHTML = "";
 
@@ -607,16 +606,6 @@ const App = {
                 });
         },
 
-        startAutoRefresh: () => {
-            if (App.news.interval) clearInterval(App.news.interval);
-            App.news.interval = setInterval(() => {
-                const feedScreen = document.getElementById('screen-feed');
-                if (feedScreen && feedScreen.classList.contains('active')) {
-                    App.news.load(true);
-                }
-            }, 30000);
-        },
-
         showDetail: (n) => {
             const overlay = document.createElement('div');
             overlay.className = 'screen active';
@@ -672,6 +661,5 @@ const App = {
 window.onload = () => {
     App.init();
     App.news.load();
-    App.news.startAutoRefresh();
     App.directory.load();
 };
