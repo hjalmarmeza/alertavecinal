@@ -281,6 +281,16 @@ input:focus {
     background: rgba(244, 63, 94, 0.3);
 }
 
+.btn-sm.purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+.btn-sm.purple:active {
+    background: rgba(139, 92, 246, 0.3);
+}
+
 /* --- MAINTENANCE SWITCH --- */
 .maint-toggle {
     background: rgba(255, 255, 255, 0.05);
