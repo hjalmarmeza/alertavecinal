@@ -362,10 +362,11 @@ input:-webkit-autofill:active {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     padding: 0 24px;
-    margin-bottom: 90px;
-    /* Espacio para navbar */
+    margin-bottom: 130px;
+    /* AUMENTADO - PREVENTS NAV OVERLAP */
     margin-top: auto;
-    /* Empujar hacia abajo si sobra espacio */
+    position: relative;
+    z-index: 10;
 }
 
 .btn-action {
