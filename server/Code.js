@@ -165,20 +165,21 @@ function saveIncident(p) {
     }
     sheet.appendRow(rowData);
 
-    // NUEVO: PUBLICAR AUTOMÁTICAMENTE EN NOTICIAS (Para que se vea en la App)
+    // NUEVO: PUBLICAR AUTOMÁTICAMENTE EN NOTICIAS (CON FOTO)
     try {
-        // Solo publicamos incidentes "públicos", no privados ni basura doméstica, etc.
-        // O publicamos todos. Por ahora TODO para que veas el resultado.
         var newsSheet = getSheet("Noticias");
-        // ID, Titulo, Cuerpo, Fecha, Imagen, Autor, Tipo 
-        var tipoNoticia = (p.tipo === "ROBO" || p.tipo === "SOSPECHOSO") ? "ALERTA" : "INFO";
 
+        // Determinar tipo de Alerta para el chip
+        var tipoNoticia = (p.tipo === "ROBO" || p.tipo === "SOSPECHOSO") ? "ALERTA" : "INFO";
+        if (p.tipo === "RUIDO" || p.tipo === "BASURA") tipoNoticia = "COMUNIDAD";
+
+        // AQUI ESTÁ EL CAMBIO CLAVE: p.imagen SE PASA A LA NOTICIA
         newsSheet.appendRow([
             guid(),
             "⚠️ VECINO REPORTA: " + p.tipo,
             p.descripcion + "\n\n(Reportado por: " + p.familia + ")",
             new Date(),
-            "", // No ponemos la foto en noticias público automáticamente para no saturar, pero se podría.
+            p.imagen || "", // <--- AHORA PASAMOS LA IMAGEN REAL A LA NOTICIA
             p.familia
         ]);
 
@@ -197,6 +198,9 @@ function saveIncident(p) {
             "📄 " + p.descripcion + "\n" +
             "📍 Ubicación: " + mapLink + "\n" +
             "⏰ " + new Date().toLocaleTimeString();
+
+        // Info adicional si hay foto
+        if (p.imagen) mensaje += "\n📸 (Foto adjunta en la App)";
 
         sendTelegramMessage(mensaje);
     } catch (e) {
