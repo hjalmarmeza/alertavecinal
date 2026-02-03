@@ -77,7 +77,8 @@ function registerUser(p) {
         p.lote,
         p.coords,
         new Date(),
-        "PENDIENTE"
+        "",          // INDICE 11: ROL (Vacío al inicio)
+        "PENDIENTE"  // INDICE 12: STATUS
     ];
 
     sheet.appendRow(row);
@@ -211,6 +212,8 @@ function loginUser(p) {
             }
 
             var status = row[12]; // Col 13
+            if (status === undefined) status = ""; // Protección contra filas cortas
+
             // Normalizar (quitar espacios y poner mayúsculas)
             var statusClean = String(status).trim().toUpperCase();
 
