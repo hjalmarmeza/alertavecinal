@@ -46,6 +46,14 @@ const Admin = {
             const configBtn = document.querySelector('button[onclick="Admin.nav(\'tab-config\')"]');
             if (configBtn) configBtn.style.display = 'none';
         }
+
+        // 4. Update Config Tab Info
+        const confName = document.getElementById('conf-name');
+        const confRole = document.getElementById('conf-role');
+        const confAvatar = document.getElementById('conf-avatar');
+        if (confName) confName.innerText = Admin.user.familia;
+        if (confRole) confRole.innerText = rol;
+        if (confAvatar) confAvatar.src = `https://ui-avatars.com/api/?name=${Admin.user.familia}&background=random&size=64`;
     },
 
     nav: (tabId) => {
@@ -81,7 +89,7 @@ const Admin = {
         const titles = {
             'tab-users': 'Usuarios',
             'tab-sos': 'Historial SOS',
-            'tab-config': 'Configuración'
+            'tab-config': 'Ajustes'
         };
         const titleEl = document.getElementById('page-title');
         if (titleEl) titleEl.innerText = titles[tabId] || 'Panel';
@@ -235,20 +243,27 @@ const Admin = {
             .then(data => {
                 tbody.innerHTML = "";
                 if (data.status === 'success' && data.data.length > 0) {
-                    // Ordenar por fecha (más reciente primero) si no viene ordenado
-                    // data.data.sort... (asumimos que sheet ya viene en orden append, invertiremos)
                     const alerts = data.data.reverse();
 
                     alerts.forEach(a => {
                         const tr = document.createElement('tr');
-                        // Use new CSS classes
-                        const statusClass = (a.status === 'ATENDIDO' || a.status === 'RESOLVED') ? 'status-resolved' : 'status-active';
-                        const displayStatus = (a.status === 'ATENDIDO' || a.status === 'RESOLVED') ? 'ATENDIDO' : 'ACTIVA 🚨';
+                        // Status Logic
+                        const isResolved = (a.status === 'ATENDIDO' || a.status === 'RESOLVED');
+                        const statusClass = isResolved ? 'status-resolved' : 'status-active';
+                        const displayStatus = isResolved ? 'ATENDIDO' : 'ACTIVA 🚨';
+
+                        // Action: If active, click to resolve
+                        const actionAttr = !isResolved ? `onclick="Admin.resolveAlert('${a.id}')" style="cursor:pointer;" title="Tocar para atender"` : '';
 
                         tr.innerHTML = `
                             <td>${new Date(a.date).toLocaleString()}</td>
                             <td><strong>${a.user}</strong></td>
-                            <td><span class="${statusClass}">${displayStatus}</span></td>
+                            <td>
+                                <span class="${statusClass}" ${actionAttr}>
+                                    ${displayStatus}
+                                </span>
+                                ${!isResolved ? '<div style="font-size:0.7rem; color:var(--text-sec); margin-top:4px;">Tocar para atender</div>' : ''}
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
@@ -260,6 +275,19 @@ const Admin = {
                 console.error(e);
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Error de conexión</td></tr>';
             });
+    },
+
+    resolveAlert: (id) => {
+        if (confirm("¿Confirmas que esta alerta ha sido ATENDIDA?")) {
+            // Optimistic update
+            fetch(`${Admin.apiUrl}?action=resolve_alert&alert_id=${id}`)
+                .then(res => res.json())
+                .then(d => {
+                    alert("Alerta actualizada.");
+                    Admin.loadSOSHistory();
+                })
+                .catch(e => alert("Error de conexión"));
+        }
     }
 };
 

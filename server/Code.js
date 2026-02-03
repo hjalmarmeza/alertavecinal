@@ -45,12 +45,13 @@ function handleRequest(e) {
         else if (action === "send_alert") result = saveAlert(params);
         else if (action === "check_status") result = checkStatus();
         else if (action === "login") result = loginUser(params);
-        else if (action === "resolve_user") result = resolveUser(params); // Nuevo
+        else if (action === "resolve_user") result = resolveUser(params);
         else if (action === "get_users") result = getUsers();
         else if (action === "get_alerts") result = getAlerts();
-        else if (action === "report_incident") result = saveIncident(params); // Nuevo Handler Reportes
-        else if (action === "save_news") result = saveNews(params); // Rutas Noticias
-        else if (action === "get_news") result = getNews();         // Rutas Noticias
+        else if (action === "resolve_alert") result = resolveAlert(params); // NUEVO
+        else if (action === "report_incident") result = saveIncident(params);
+        else if (action === "save_news") result = saveNews(params);
+        else if (action === "get_news") result = getNews();
         else result = { status: "error", message: "Action unknown: " + action };
 
     } catch (error) {
@@ -390,6 +391,22 @@ function resolveUser(p) {
         }
     }
     return { status: "error", message: "ID no encontrado" };
+}
+
+function resolveAlert(p) {
+    var sheet = getSheet("Alertas");
+    var data = sheet.getDataRange().getValues();
+
+    for (var i = 1; i < data.length; i++) {
+        // Col 0 es ID
+        if (String(data[i][0]).trim() == String(p.alert_id).trim()) {
+            // Columna 6 (F) -> ESTADO (Index 5)
+            sheet.getRange(i + 1, 6).setValue("ATENDIDO");
+            SpreadsheetApp.flush();
+            return { status: "success", message: "Alerta marcada como ATENDIDO" };
+        }
+    }
+    return { status: "error", message: "Alerta ID no encontrada" };
 }
 
 
