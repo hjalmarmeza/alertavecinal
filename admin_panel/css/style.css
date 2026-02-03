@@ -465,24 +465,78 @@ input:checked+.slider:before {
         background: rgba(139, 92, 246, 0.15);
     }
 
-    /* Tables Container */
-    .table-container {
-        overflow-x: auto;
-        margin-right: -20px;
-        /* Bleed off screen */
-        padding-right: 20px;
+    /* TABLES -> CARDS TRANSFORMATION */
+    /* Hide Table Headers */
+    .data-table thead {
+        display: none;
     }
 
-    .data-table th,
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
     .data-table td {
-        font-size: 0.8rem;
-        padding: 10px;
+        display: block;
+        width: 100%;
     }
 
-    /* Hide some less important columns on mobile if needed */
-    .data-table th:nth-child(3),
+    /* Each Row becomes a Card */
+    .data-table tr {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        padding: 16px;
+    }
+
+    .data-table td {
+        padding: 4px 0;
+        border: none;
+        text-align: left;
+    }
+
+    /* Make Name/Email cell stand out */
+    .data-table td:nth-child(1) {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 8px;
+    }
+
+    /* Additional Info Styling */
+    .data-table td:nth-child(2),
     .data-table td:nth-child(3) {
-        /* Example: If you wanted to hide Address column on mobile */
-        /* display: none; */
+        font-size: 0.85rem;
+        color: var(--text-sec);
+        display: inline-block;
+        /* Put Family and Address side by side if they fit? */
+        width: auto;
+        margin-right: 10px;
+    }
+
+    /* Address Prefix */
+    .data-table td:nth-child(3):before {
+        content: "📍 ";
+    }
+
+    /* Actions Cell */
+    .data-table td:last-child {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    /* Fix Table Container Scroll (Remove it since we are stacking now) */
+    .table-container {
+        overflow-x: visible;
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    /* Card visual tweak */
+    .card {
+        padding: 16px;
     }
 }
