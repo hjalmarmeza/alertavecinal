@@ -153,6 +153,27 @@ var TELEGRAM_CHAT_ID = PROP_CHAT || "TU_CHAT_ID_AQUI";
 
 function saveAlert(p) {
     var sheet = getSheet("Alertas");
+
+    // 1. Intentar Enviar a Telegram PRIMERO
+    var telegramResult = "Pendiente";
+    var mapLink = "https://maps.google.com/?q=" + p.coords;
+    var mensaje = "🚨 ¡ALERTA VECINAL ACTIVADA! 🚨\n\n" +
+        "👤 Familia: " + (p.familia || p.user_id) + "\n" +
+        "📍 Ubicación: " + (p.direccion || "Ubicación GPS") + "\n" +
+        "⏰ Hora: " + new Date().toLocaleTimeString() + "\n\n" +
+        "🗺 Ver Mapa: " + mapLink;
+
+    try {
+        console.log("Intentando enviar Telegram a: " + TELEGRAM_CHAT_ID);
+        var resp = sendTelegramMessage(mensaje);
+        telegramResult = "ENVIO OK: " + resp;
+    } catch (e) {
+        console.error("Error Telegram: " + e.toString());
+        telegramResult = "ERROR: " + e.toString();
+    }
+
+    // 2. Guardar en Sheet (SIN columnas extra, respetando esquema original)
+    // ID, Usuario, Tipo, GPS, Fecha, Estado
     var rowData = [
         guid(),
         p.user_id, // Email o ID
@@ -163,31 +184,11 @@ function saveAlert(p) {
     ];
     sheet.appendRow(rowData);
 
-    // Enviar a Telegram
-    var telegramResult = "No intentado";
-    try {
-        var mapLink = "https://maps.google.com/?q=" + p.coords;
-        // MENSAJE PLANO SIN FORMATO MARKDOWN PARA EVITAR ERRORES
-        var mensaje = "🚨 ¡ALERTA VECINAL ACTIVADA! 🚨\n\n" +
-            "👤 Familia: " + (p.familia || p.user_id) + "\n" +
-            "📍 Ubicación: " + (p.direccion || "Ubicación GPS") + "\n" +
-            "⏰ Hora: " + new Date().toLocaleTimeString() + "\n\n" +
-            "🗺 Ver Mapa: " + mapLink;
-
-        console.log("Enviando mensaje Telegram...");
-        telegramResult = sendTelegramMessage(mensaje);
-        console.log("Resultado Telegram: " + telegramResult);
-
-    } catch (e) {
-        console.error("Error Telegram: " + e.toString());
-        telegramResult = "Error Catch: " + e.toString();
-    }
-
     return { status: "success", message: "Alerta Guardada", debug: telegramResult };
 }
 
 function sendTelegramMessage(text) {
-    if (TELEGRAM_BOT_TOKEN === "TU_TOKEN_AQUI" || !TELEGRAM_BOT_TOKEN) return "Token no configurado";
+    if (TELEGRAM_BOT_TOKEN === "TU_TOKEN_AQUI" || !TELEGRAM_BOT_TOKEN) return "Error: Token no configurado";
 
     var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
     var payload = {
