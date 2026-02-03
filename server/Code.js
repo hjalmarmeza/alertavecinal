@@ -1,4 +1,3 @@
-// Versión Final - Todos los parches aplicados (Pepe Luna Fix + No Duplicados)
 function doGet(e) {
     return handleRequest(e);
 }
@@ -135,11 +134,13 @@ function getAlerts() {
     return { status: "success", data: alerts };
 }
 
-// --- CONFIGURACIÓN TELEGRAM ---
-// El usuario debe obtener estos datos de @BotFather y su grupo
-// OJO: REEMPLAZA ESTO EN GOOGLE APPS SCRIPT CON TU TOKEN REAL.
-var TELEGRAM_BOT_TOKEN = "SECRETO_EN_GOOGLE_CLOUD";
-var TELEGRAM_CHAT_ID = "SECRETO_EN_GOOGLE_CLOUD";
+// --- CONFIGURACION TELEGRAM (VERSION SEGURA GITHUB) ---
+// En Apps Script: Configura Archivo > Propiedades del proyecto > Propiedades del script
+var PROP_TOKEN = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+var PROP_CHAT = PropertiesService.getScriptProperties().getProperty('TELEGRAM_CHAT_ID');
+
+var TELEGRAM_BOT_TOKEN = PROP_TOKEN || "TU_TOKEN_AQUI";
+var TELEGRAM_CHAT_ID = PROP_CHAT || "TU_CHAT_ID_AQUI";
 
 function saveAlert(p) {
     var sheet = getSheet("Alertas");
@@ -164,7 +165,10 @@ function saveAlert(p) {
             "⏰ Hora: " + new Date().toLocaleTimeString() + "\n\n" +
             "🗺 Ver Mapa: " + mapLink;
 
+        console.log("Enviando mensaje Telegram...");
         telegramResult = sendTelegramMessage(mensaje);
+        console.log("Resultado Telegram: " + telegramResult);
+
     } catch (e) {
         console.error("Error Telegram: " + e.toString());
         telegramResult = "Error Catch: " + e.toString();
@@ -174,13 +178,12 @@ function saveAlert(p) {
 }
 
 function sendTelegramMessage(text) {
-    if (TELEGRAM_BOT_TOKEN === "TU_TOKEN_AQUI") return "Token no configurado";
+    if (TELEGRAM_BOT_TOKEN === "TU_TOKEN_AQUI" || !TELEGRAM_BOT_TOKEN) return "Token no configurado";
 
     var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
     var payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": text
-        // "parse_mode": "Markdown" <-- DESACTIVADO TEMPORALMENTE
     };
 
     var options = {

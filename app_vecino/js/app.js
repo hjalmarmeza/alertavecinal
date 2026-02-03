@@ -367,6 +367,49 @@ const App = {
         }
     },
 
+    // --- DIRECTORIO ---
+    directory: {
+        data: [
+            { name: "Comisaría Sectorial", phone: "105", icon: "local_police", desc: "Emergencias Policiales" },
+            { name: "Bomberos Voluntarios", phone: "116", icon: "local_fire_department", desc: "Incendios y Rescates" },
+            { name: "Serenazgo Central", phone: "014444444", icon: "security", desc: "Patrullaje Municipal" },
+            { name: "Centro de Salud", phone: "113", icon: "medical_services", desc: "Atención Médica Urgente" },
+            { name: "Gasfitero Zonal", phone: "999000111", icon: "plumbing", desc: "Servicio Técnico" },
+            { name: "Electricista", phone: "999000222", icon: "electric_bolt", desc: "Servicio Técnico" }
+        ],
+        load: () => {
+            const container = document.querySelector('#screen-directory .scroll-content');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="header-simple"><h2>Directorio</h2></div>
+                <h3 style="margin:10px 0 20px; color:var(--text-sec); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Números de Emergencia</h3>
+                <div class="directory-list"></div>
+             `;
+            const list = container.querySelector('.directory-list');
+
+            App.directory.data.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'contact-card';
+                el.innerHTML = `
+                    <div style="display:flex; align-items:center; flex:1;">
+                        <div class="contact-avatar">
+                            <span class="material-icons-round">${item.icon}</span>
+                        </div>
+                        <div class="contact-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.desc}</p>
+                        </div>
+                    </div>
+                    <button class="btn-call" onclick="App.call('${item.phone}')">
+                        <span class="material-icons-round">call</span>
+                    </button>
+                 `;
+                list.appendChild(el);
+            });
+        }
+    },
+
     call: (number) => {
         if (number === 'admin') number = '999999999';
         window.location.href = `tel:${number}`;
@@ -378,7 +421,7 @@ const App = {
             const container = document.querySelector('#screen-feed .scroll-content');
             if (!container) return;
 
-            container.innerHTML = '<p style="text-align:center; padding:20px; color:#64748b;">Cargando novedades...</p>';
+            container.innerHTML = '<div style="text-align:center; padding:40px;"><span class="material-icons-round" style="animation:spin 1s infinite">refresh</span></div>';
 
             const timestamp = new Date().getTime();
             fetch(`${App.apiUrl}?action=get_news&t=${timestamp}`)
@@ -386,35 +429,38 @@ const App = {
                 .then(data => {
                     container.innerHTML = "";
                     if (data.status === 'success' && data.data.length > 0) {
+
+                        // Header Title
+                        const h2 = document.createElement('div');
+                        h2.className = 'header-simple';
+                        h2.innerHTML = '<h2>Noticias</h2>';
+                        container.appendChild(h2);
+
                         data.data.forEach(n => {
-                            // Crear Tarjeta de Noticia
                             const date = new Date(n.fecha).toLocaleDateString();
+                            const tagClass = (n.tipo && n.tipo === 'ALERTA') ? 'alert' : 'info';
+
                             let imgHtml = "";
                             if (n.imagen && n.imagen.startsWith('http')) {
-                                imgHtml = `<img src="${n.imagen}" style="width:100%; border-radius:8px; margin-top:10px; max-height:200px; object-fit:cover;">`;
+                                imgHtml = `<img src="${n.imagen}" class="news-image" loading="lazy">`;
                             }
 
                             const card = document.createElement('div');
-                            card.className = "news-card"; // Necesitaremos CSS para esto
-                            card.style.background = "white";
-                            card.style.padding = "15px";
-                            card.style.borderRadius = "12px";
-                            card.style.marginBottom = "15px";
-                            card.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+                            card.className = "news-card";
 
                             card.innerHTML = `
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                                    <span style="font-size:0.7rem; background:#e0f2fe; color:#0284c7; padding:2px 8px; border-radius:10px; font-weight:600;">COMUNICADO</span>
-                                    <small style="color:#94a3b8; font-size:0.75rem;">${date}</small>
+                                <div class="news-header">
+                                    <span class="chip ${tagClass}">${n.tipo || 'COMUNICADO'}</span>
+                                    <small style="color:var(--text-sec); font-size:0.75rem;">${date}</small>
                                 </div>
-                                <h3 style="margin: 5px 0; color:#1e293b; font-size:1.1rem;">${n.titulo}</h3>
-                                <p style="color:#475569; font-size:0.9rem; line-height:1.5;">${n.cuerpo}</p>
+                                <h3 class="news-title">${n.titulo}</h3>
+                                <div class="news-body">${n.cuerpo}</div>
                                 ${imgHtml}
                             `;
                             container.appendChild(card);
                         });
 
-                        // Actualizar badge
+                        // Update badge
                         const badge = document.getElementById('news-badge');
                         if (badge) {
                             badge.innerText = data.data.length;
@@ -422,11 +468,16 @@ const App = {
                         }
 
                     } else {
-                        container.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.6;"><span class="material-icons-round" style="font-size:3rem; color:#cbd5e1;">newspaper</span><p>No hay noticias recientes</p></div>';
+                        container.innerHTML = `
+                            <div class="header-simple"><h2>Noticias</h2></div>
+                            <div style="text-align:center; padding:60px 20px; opacity:0.6;">
+                                <span class="material-icons-round" style="font-size:4rem; color:#cbd5e1; margin-bottom:10px;">newspaper</span>
+                                <p>No hay noticias recientes</p>
+                            </div>`;
                     }
                 })
                 .catch(e => {
-                    container.innerHTML = '<p style="text-align:center; color:red;">Error de conexión</p>';
+                    container.innerHTML = '<div class="header-simple"><h2>Noticias</h2></div><p style="text-align:center; color:#f43f5e; padding:20px;">Error de conexión</p>';
                 });
         }
     }
@@ -434,6 +485,7 @@ const App = {
 
 window.onload = () => {
     App.init();
-    // Cargar noticias al inicio (o al cambiar de tab)
+    // Cargar noticias y directorio
     App.news.load();
+    App.directory.load();
 };
