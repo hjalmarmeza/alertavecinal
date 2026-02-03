@@ -31,19 +31,10 @@
                     <span class="material-icons-round">settings</span> Configuración
                 </button>
 
-                <!-- SECCIÓN COMUNIDAD (PRESIDENTE) -->
-                <div class="menu-label">COMUNIDAD</div>
-                <button class="menu-item" onclick="Admin.nav('tab-news')">
-                    <span class="material-icons-round">campaign</span> Noticias
-                </button>
-                <button class="menu-item" onclick="Admin.nav('tab-polls')">
-                    <span class="material-icons-round">how_to_vote</span> Votaciones
-                </button>
-                <button class="menu-item" onclick="Admin.nav('tab-docs')">
-                    <span class="material-icons-round">folder</span> Documentos
-                </button>
-                <button class="menu-item" onclick="Admin.nav('tab-incidents')">
-                    <span class="material-icons-round">report_problem</span> Incidencias
+                <!-- SECCIÓN COMUNIDAD (SIMPLIFICADA) -->
+                <div class="menu-label">AUDITORÍA</div>
+                <button class="menu-item" onclick="Admin.nav('tab-sos')">
+                    <span class="material-icons-round">history_edu</span> Historial SOS
                 </button>
             </nav>
 
@@ -100,59 +91,25 @@
                 </div>
             </div>
 
-            <!-- TAB: VOTACIONES -->
-            <div id="tab-polls" class="content-tab">
+            <!-- TAB: HISTORIAL SOS -->
+            <div id="tab-sos" class="content-tab">
                 <div class="card">
-                    <h3>Crear Nueva Votación</h3>
-                    <form id="form-poll">
-                        <input type="text" placeholder="Pregunta (Ej: ¿Aprobar Presupuesto?)" class="full-width">
-                        <div class="row">
-                            <input type="text" placeholder="Opción 1 (Sí)" value="Sí">
-                            <input type="text" placeholder="Opción 2 (No)" value="No">
-                        </div>
-                        <div class="row">
-                            <label>Cierra en (Horas):</label>
-                            <input type="number" value="24" min="1">
-                        </div>
-                        <button class="btn-primary">PUBLICAR VOTACIÓN</button>
-                    </form>
+                    <h3>Registro de Pánicos Activados</h3>
+                    <p style="color:#64748b;">Mostrando las últimas alertas (Lectura desde Servidor)</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Familia</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sos-history-list">
+                            <!-- JS populate -->
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <!-- OTRAS TABS... -->
-            <!-- TAB: NOTICIAS (FEED) -->
-            <div id="tab-news" class="content-tab">
-                <div class="card">
-                    <h3>Publicar Noticia</h3>
-                    <form id="form-news" onsubmit="Admin.news.publish(event)">
-                        <div class="form-group">
-                            <label>Título</label>
-                            <input type="text" id="news-title" placeholder="Ej: Reunión de Seguridad" class="full-width"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label>Cuerpo del Mensaje</label>
-                            <textarea id="news-body" rows="4" placeholder="Escribe aquí los detalles..."
-                                class="full-width" required></textarea>
-                            <small>Puedes usar emojis 🚨 📢</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Link de Imagen (Opcional)</label>
-                            <input type="url" id="news-img" placeholder="https://..." class="full-width">
-                        </div>
-                        <button type="submit" class="btn-primary">PUBLICAR AHORA</button>
-                    </form>
-                </div>
-
-                <div class="card" style="margin-top: 20px;">
-                    <h3>Historial Reciente</h3>
-                    <ul id="news-history-list" style="list-style: none; padding: 0; color: #64748b;">
-                        <li>Cargando historial...</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="tab-incidents" class="content-tab">
-                <h2>Módulo Incidencias</h2>
             </div>
 
         </main>
