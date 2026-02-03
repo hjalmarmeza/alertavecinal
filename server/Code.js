@@ -212,10 +212,16 @@ function loginUser(p) {
             }
 
             var status = row[12]; // Col 13
-            if (status === undefined) status = ""; // Protección contra filas cortas
+            // SMART CHECK: Si Col 13 falla, mira Col 12 (Index 11) o el Rol
+            var statusClean = String(status || "").trim().toUpperCase();
 
-            // Normalizar (quitar espacios y poner mayúsculas)
-            var statusClean = String(status).trim().toUpperCase();
+            if (statusClean === "" && row[11] && String(row[11]).trim().toUpperCase() === "ACTIVO") {
+                statusClean = "ACTIVO";
+            }
+            if (statusClean === "" && rol === "ACTIVO") statusClean = "ACTIVO";
+
+            // Normalizar final
+            statusClean = String(statusClean).trim().toUpperCase();
 
             // VALIDACIONES DE ACCESO
             if (statusClean === "BLOQUEADO") {
