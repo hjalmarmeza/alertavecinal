@@ -68,43 +68,93 @@ const Admin = {
     },
 
     loadUsers: () => {
-        const tbody = document.getElementById('pending-users-list');
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando solicitudes...</td></tr>';
+        const tbodyPending = document.getElementById('pending-users-list');
+        const tbodyActive = document.getElementById('active-users-list');
+
+        if (tbodyPending) tbodyPending.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando solicitudes...</td></tr>';
+        if (tbodyActive) tbodyActive.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando padrón...</td></tr>';
 
         const timestamp = new Date().getTime();
         fetch(Admin.apiUrl + '?action=get_users&t=' + timestamp)
             .then(res => res.json())
             .then(data => {
-                tbody.innerHTML = "";
                 if (data.status === 'success') {
-                    // Filtrar solo PENDIENTES
+                    // SEPARAR PENDIENTES Y ACTIVOS (o Bloqueados)
                     const pending = data.data.filter(u => u.status === 'PENDIENTE');
+                    const active = data.data.filter(u => u.status === 'ACTIVO' || u.status === 'PRESIDENTE' || u.status === 'ADMIN');
+                    // Nota: Si el rol es Admin/Presidente, el status suele ser ACTIVO. Ajustar según backend.
+                    // Asumiremos que status es lo que manda.
 
-                    if (pending.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.5; padding: 20px;">No hay solicitudes pendientes</td></tr>';
-                        return;
+                    // 1. LLENAR PENDIENTES
+                    Admin.populateUserTable(tbodyPending, pending, true);
+
+                    // 2. LLENAR ACTIVOS
+                    // Filtraremos para NO mostrar bloqueados aquí, o sí? Mejor solo Activos para bloquearlos.
+                    const cleanActive = data.data.filter(u => u.status === 'ACTIVO' && u.rol !== 'ADMIN');
+                    // Excluímos al ADMIN supremo para que no se auto-bloquee por error, 
+                    // aunque el backend debería protegerlo.
+
+                    if (tbodyActive) {
+                        Admin.allActiveUsers = cleanActive; // Guardar para filtro
+                        Admin.populateUserTable(tbodyActive, cleanActive, false);
                     }
 
-                    pending.forEach(u => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>
-                                <div style="font-weight:600">${u.nombre}</div>
-                                <div style="font-size:0.8rem; opacity:0.7">${u.email}</div>
-                            </td>
-                            <td>${u.familia}</td>
-                            <td>Mz ${u.mz} Lt ${u.lote}</td>
-                            <td>
-                                <button class="btn-sm green" onclick="Admin.users.resolve('${u.id}', 'ACTIVO')">Aprobar</button>
-                                <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">Rechazar</button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="4">Error cargando datos</td></tr>';
+                    if (tbodyPending) tbodyPending.innerHTML = '<tr><td colspan="4">Error cargando datos</td></tr>';
                 }
             });
+    },
+
+    populateUserTable: (tbody, users, isPending) => {
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.5; padding: 20px;">No hay registros</td></tr>';
+            return;
+        }
+
+        users.forEach(u => {
+            const tr = document.createElement('tr');
+            let actions = '';
+
+            if (isPending) {
+                actions = `
+                    <button class="btn-sm green" onclick="Admin.users.resolve('${u.id}', 'ACTIVO')">Aprobar</button>
+                    <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">Rechazar</button>
+                `;
+            } else {
+                // MODIFICACION: Botón Bloquear solo para ACTIVOS
+                // Si el usuario logueado es PRESIDENTE, podrías ocultar esto si quisieras.
+                // Pero acordamos que ambos pueden.
+                actions = `
+                    <button class="btn-sm red" onclick="Admin.users.resolve('${u.id}', 'BLOQUEADO')">BLOQUEAR</button>
+                `;
+            }
+
+            tr.innerHTML = `
+                <td>
+                    <div style="font-weight:600">${u.nombre}</div>
+                    <div style="font-size:0.8rem; opacity:0.7">${u.email}</div>
+                </td>
+                <td>${u.familia}</td>
+                <td>Mz ${u.mz} Lt ${u.lote}</td>
+                <td>${actions}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    },
+
+    filterActiveUsers: () => {
+        const query = document.getElementById('search-active').value.toLowerCase();
+        const tbody = document.getElementById('active-users-list');
+        if (!Admin.allActiveUsers || !tbody) return;
+
+        const filtered = Admin.allActiveUsers.filter(u =>
+            u.nombre.toLowerCase().includes(query) ||
+            u.familia.toLowerCase().includes(query) ||
+            u.mz.toLowerCase().includes(query)
+        );
+        Admin.populateUserTable(tbody, filtered, false);
     },
 
 

@@ -89,6 +89,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- USUARIOS ACTIVOS (NUEVA SECCIÓN) -->
+                <div class="card" style="margin-top: 25px;">
+                    <h3>Padrón de Vecinos Activos</h3>
+                    <input type="text" id="search-active" placeholder="Buscar por Nombre o Familia..."
+                        onkeyup="Admin.filterActiveUsers()"
+                        style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px;">
+
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Vecino</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="active-users-list">
+                                <!-- JS insertará filas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- TAB: HISTORIAL SOS -->
