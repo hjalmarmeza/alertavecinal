@@ -310,13 +310,6 @@ const App = {
                     } else if (App.monitor.isRedScreenActive) {
                         App.monitor.hideRedScreen(false);
                     }
-
-                    // 2. CHEQUEO DE NOTICIAS (PIGGYBACK)
-                    // Si el ID de la última noticia cambió, recargar noticias silenciosamente
-                    if (data.lastNewsId && App.news.lastIdKnown && data.lastNewsId !== App.news.lastIdKnown) {
-                        console.log("Nueva noticia detectada (Monitor). Recargando...");
-                        App.news.load(true);
-                    }
                 })
                 .catch(e => console.error("Monitor network error (silenced)"));
         },
@@ -524,8 +517,6 @@ const App = {
 
     // --- NOTICIAS ---
     news: {
-        lastIdKnown: null, // Para comparar con el monitor y saber si recargar
-
         load: (silent = false) => {
             const container = document.querySelector('#screen-feed .scroll-content');
             if (!container) return;
@@ -540,19 +531,27 @@ const App = {
                 .then(data => {
                     if (data.status === 'success' && data.data.length > 0) {
 
-                        // Guardar referencia de la última noticia para el monitor "Piggyback"
-                        // Asumimos que la primera en la lista es la más reciente
-                        if (data.data[0] && data.data[0].id) {
-                            App.news.lastIdKnown = data.data[0].id;
-                        }
+                        // Limpiar siempre para repintar ordenado
+                        container.innerHTML = "";
 
-                        if (!silent || (silent && container.innerHTML)) container.innerHTML = "";
+                        // HEADER CON BOTÓN REFRESH MANUAL
+                        const header = document.createElement('div');
+                        header.className = 'header-simple';
+                        header.style.display = 'flex';
+                        header.style.justifyContent = 'space-between';
+                        header.style.alignItems = 'center';
 
-                        // Header Title
-                        const h2 = document.createElement('div');
-                        h2.className = 'header-simple';
-                        h2.innerHTML = '<h2>Noticias</h2>';
-                        container.appendChild(h2);
+                        header.innerHTML = `
+                            <h2 style="margin:0;">Noticias</h2>
+                            <button class="btn-icon" id="btn-refresh-news" style="background:rgba(255,255,255,0.1); width:40px; height:40px; border-radius:50%;">
+                                <span class="material-icons-round">refresh</span>
+                            </button>
+                        `;
+                        container.appendChild(header);
+
+                        header.querySelector('#btn-refresh-news').onclick = () => {
+                            App.news.load(false);
+                        };
 
                         data.data.forEach(n => {
                             const date = new Date(n.fecha).toLocaleDateString();
@@ -592,9 +591,15 @@ const App = {
                             badge.style.display = 'flex';
                         }
 
-                    } else if (!silent) {
+                    } else {
+                        // Estado Vacío con Botón Refresh
                         container.innerHTML = `
-                            <div class="header-simple"><h2>Noticias</h2></div>
+                            <div class="header-simple" style="display:flex; justify-content:space-between; align-items:center;">
+                                <h2 style="margin:0;">Noticias</h2>
+                                <button class="btn-icon" onclick="App.news.load()" style="background:rgba(255,255,255,0.1); width:40px; height:40px; border-radius:50%;">
+                                    <span class="material-icons-round">refresh</span>
+                                </button>
+                            </div>
                             <div style="text-align:center; padding:60px 20px; opacity:0.6;">
                                 <span class="material-icons-round" style="font-size:4rem; color:#cbd5e1; margin-bottom:10px;">newspaper</span>
                                 <p>No hay noticias recientes</p>
@@ -602,7 +607,13 @@ const App = {
                     }
                 })
                 .catch(e => {
-                    if (!silent) container.innerHTML = '<div class="header-simple"><h2>Noticias</h2></div><p style="text-align:center; color:#f43f5e; padding:20px;">Error de conexión</p>';
+                    container.innerHTML = `
+                        <div class="header-simple"><h2>Noticias</h2></div>
+                        <div style="text-align:center; padding:40px;">
+                            <p style="color:#f43f5e;">Error de conexión</p>
+                            <button class="btn-primary" onclick="App.news.load()" style="margin-top:10px;">Reintentar</button>
+                        </div>
+                    `;
                 });
         },
 
