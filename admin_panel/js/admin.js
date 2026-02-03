@@ -49,14 +49,44 @@ const Admin = {
     },
 
     nav: (tabId) => {
+        // 1. Hide all Tabs
         document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-
         document.getElementById(tabId).classList.add('active');
-        // Marcar menu activo (simple logic)
-        event.currentTarget.classList.add('active');
 
-        // Recargar datos si es necesario
+        // 2. Update Desktop Sidebar
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        // Find which desktop menu corresponds to this tab (manual mapping or by onclick context)
+        // Since we pass tabId, let's map: tab-users -> 0, tab-config -> 1, tab-sos -> 2 in desktop
+        // Simpler: Just rely on the clicked event IF it exists, otherwise manual sync.
+
+        // 3. Update Mobile Nav
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+        // 4. Highlight current trigger safely
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+
+            // SYNC: If I clicked mobile, highlight desktop too (and vice versa)
+            // This is a bit tricky wihtout IDs on buttons, but let's try a simple approach based on text or specific attributes.
+            // We will settle for: The clicked one gets active. 
+            // Ideally we should select by the tabId target.
+            try {
+                // Try to find the OTHER button that points to this tabID and activate it too
+                const selector = `button[onclick="Admin.nav('${tabId}')"]`;
+                document.querySelectorAll(selector).forEach(btn => btn.classList.add('active'));
+            } catch (e) { }
+        }
+
+        // Title Update based on Tab
+        const titles = {
+            'tab-users': 'Usuarios',
+            'tab-sos': 'Historial SOS',
+            'tab-config': 'Configuración'
+        };
+        const titleEl = document.getElementById('page-title');
+        if (titleEl) titleEl.innerText = titles[tabId] || 'Panel';
+
+        // Load Data
         if (tabId === 'tab-users') Admin.loadUsers();
         if (tabId === 'tab-sos') Admin.loadSOSHistory();
     },
@@ -211,12 +241,14 @@ const Admin = {
 
                     alerts.forEach(a => {
                         const tr = document.createElement('tr');
-                        const statusClass = a.status === 'ATENDIDO' ? 'color:#10b981' : 'color:#f43f5e';
+                        // Use new CSS classes
+                        const statusClass = (a.status === 'ATENDIDO' || a.status === 'RESOLVED') ? 'status-resolved' : 'status-active';
+                        const displayStatus = (a.status === 'ATENDIDO' || a.status === 'RESOLVED') ? 'ATENDIDO' : 'ACTIVA 🚨';
+
                         tr.innerHTML = `
                             <td>${new Date(a.date).toLocaleString()}</td>
                             <td><strong>${a.user}</strong></td>
-                            <td><span class="chip red">SOS</span></td>
-                            <td style="${statusClass}; font-weight:bold;">${a.status}</td>
+                            <td><span class="${statusClass}">${displayStatus}</span></td>
                         `;
                         tbody.appendChild(tr);
                     });
