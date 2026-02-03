@@ -472,7 +472,7 @@ input:checked+.slider:before {
         background: rgba(15, 23, 42, 0.95);
         backdrop-filter: blur(10px);
         margin: -16px -16px 20px -16px;
-        padding: 16px 20px;
+        padding: 16px 20px 16px 65px;
         border-bottom: 1px solid var(--border);
         flex-direction: row;
         justify-content: space-between;

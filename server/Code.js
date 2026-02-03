@@ -627,7 +627,12 @@ function toggleMaint(p) {
             "🔧 MODO MANTENIMIENTO ACTIVADO: La App Vecino estará bloqueada temporalmente para actualizaciones." :
             "✅ MODO NORMAL ACTIVADO: La App Vecino vuelve a estar disponible.";
 
-        sendTelegramMessage(msg);
+        try {
+            sendTelegramMessage(msg);
+        } catch (err) {
+            console.warn("Telegram failed but maintenance proceeding: " + err);
+        }
+
         return { status: "success", isMaint: status };
     } catch (e) {
         return { status: "error", message: e.toString() };
