@@ -8,6 +8,15 @@ function doPost(e) {
 
 function handleRequest(e) {
     var output = ContentService.createTextOutput();
+
+    // PROTECCIÓN CONTRA EJECUCIÓN MANUAL EN EDITOR (Fix error imagen 4)
+    if (!e || !e.parameter) {
+        var msg = "⚠️ NO EJECUTAR ESTA FUNCIÓN DIRECTAMENTE. \n" +
+            "Para probar Telegram, ejecuta la función 'testTelegram' seleccionándola en el menú superior.";
+        console.warn(msg);
+        return ContentService.createTextOutput(JSON.stringify({ status: "error", message: msg })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var params = e.parameter || {}; // Start with query params
 
     // 1. INTENTAR LEER CUERPO JSON (Para app JS moderna)
@@ -421,4 +430,24 @@ function getNews() {
     }
 
     return { status: "success", data: news };
+}
+
+// --- HERRAMIENTAS DE DIAGNÓSTICO ---
+function testTelegram() {
+    console.log("-----------------------------------------");
+    console.log("🧪 INICIANDO PRUEBA DE TELEGRAM MANUAL");
+    console.log("Token usado: " + (TELEGRAM_BOT_TOKEN ? TELEGRAM_BOT_TOKEN.substring(0, 10) + "..." : "VACIO"));
+    console.log("Chat ID: " + TELEGRAM_CHAT_ID);
+
+    var msj = "🔔 HOLA MUNDO: Esta es una prueba de conexión desde el Editor de Google Apps Script.";
+    var respuesta = sendTelegramMessage(msj);
+
+    console.log("Resultado del envío: " + respuesta);
+    console.log("-----------------------------------------");
+
+    if (respuesta.indexOf('"ok":true') > -1) {
+        console.log("✅ ÉXITO: El mensaje debió llegar al grupo.");
+    } else {
+        console.error("❌ ERROR: Revisa el Chat ID o los permisos del Bot.");
+    }
 }
