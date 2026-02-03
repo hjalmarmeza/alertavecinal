@@ -200,7 +200,9 @@ h2#page-title {
 
 /* INPUTS */
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+input[type="url"],
+textarea {
     background: #09090b;
     border: 1px solid var(--border);
     color: white;
@@ -208,10 +210,111 @@ input[type="number"] {
     border-radius: 10px;
     width: 100%;
     transition: border 0.2s;
+    font-family: inherit;
+    box-sizing: border-box;
+    /* IMPORTANT */
 }
 
-input:focus {
+input:focus,
+textarea:focus {
     border-color: var(--primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+/* SMALL BUTTONS (TABLE ACTIONS) */
+.btn-sm {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 5px;
+}
+
+.btn-sm.green {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btn-sm.green:hover {
+    background: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.btn-sm.red {
+    background: rgba(244, 63, 94, 0.2);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.btn-sm.red:hover {
+    background: rgba(244, 63, 94, 0.3);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.2);
+}
+
+/* CHIPS */
+.chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.chip.red {
+    background: rgba(244, 63, 94, 0.2);
+    color: #fb7185;
+}
+
+/* TABS VISIBILITY */
+.content-tab {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.content-tab.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* USER PROFILE */
+.user-profile {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+}
+
+.user-profile .info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile small {
+    color: var(--text-sec);
+    font-size: 0.75rem;
 }
