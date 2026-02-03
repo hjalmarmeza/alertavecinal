@@ -531,18 +531,23 @@ const App = {
 
     // --- NOTICIAS ---
     news: {
-        load: () => {
+        interval: null,
+
+        load: (silent = false) => {
             const container = document.querySelector('#screen-feed .scroll-content');
             if (!container) return;
 
-            container.innerHTML = '<div style="text-align:center; padding:40px;"><span class="material-icons-round" style="animation:spin 1s infinite">refresh</span></div>';
+            if (!silent) {
+                container.innerHTML = '<div style="text-align:center; padding:40px;"><span class="material-icons-round" style="animation:spin 1s infinite">refresh</span></div>';
+            }
 
             const timestamp = new Date().getTime();
             fetch(`${App.apiUrl}?action=get_news&t=${timestamp}`)
                 .then(res => res.json())
                 .then(data => {
-                    container.innerHTML = "";
                     if (data.status === 'success' && data.data.length > 0) {
+
+                        if (!silent || (silent && container.innerHTML)) container.innerHTML = "";
 
                         // Header Title
                         const h2 = document.createElement('div');
@@ -555,17 +560,16 @@ const App = {
                             const tagClass = (n.tipo && n.tipo === 'ALERTA') ? 'alert' : 'info';
 
                             let imgHtml = "";
-                            if (n.imagen && n.imagen.startsWith('http')) {
-                                imgHtml = `<img src="${n.imagen}" class="news-image" loading="lazy">`;
+                            if (n.imagen && (n.imagen.startsWith('http') || n.imagen.startsWith('data:image'))) {
+                                const cleanSrc = n.imagen.replace(/(\r\n|\n|\r)/gm, "");
+                                imgHtml = `<img src="${cleanSrc}" class="news-image" loading="lazy">`;
                             }
 
                             const card = document.createElement('div');
                             card.className = "news-card";
 
-                            // Validar contenido para evitar "undefined"
                             const cuerpoTexto = n.cuerpo || "";
 
-                            // Renderizado de la tarjeta
                             card.innerHTML = `
                                 <div class="news-header">
                                     <span class="chip ${tagClass}">${n.tipo || 'COMUNICADO'}</span>
@@ -576,7 +580,6 @@ const App = {
                                 ${imgHtml}
                             `;
 
-                            // CLICK PARA VER DETALLE COMPLETO
                             card.onclick = () => {
                                 App.news.showDetail(n);
                             };
@@ -584,14 +587,13 @@ const App = {
                             container.appendChild(card);
                         });
 
-                        // Update badge
                         const badge = document.getElementById('news-badge');
                         if (badge) {
                             badge.innerText = data.data.length;
                             badge.style.display = 'flex';
                         }
 
-                    } else {
+                    } else if (!silent) {
                         container.innerHTML = `
                             <div class="header-simple"><h2>Noticias</h2></div>
                             <div style="text-align:center; padding:60px 20px; opacity:0.6;">
@@ -601,16 +603,23 @@ const App = {
                     }
                 })
                 .catch(e => {
-                    container.innerHTML = '<div class="header-simple"><h2>Noticias</h2></div><p style="text-align:center; color:#f43f5e; padding:20px;">Error de conexión</p>';
+                    if (!silent) container.innerHTML = '<div class="header-simple"><h2>Noticias</h2></div><p style="text-align:center; color:#f43f5e; padding:20px;">Error de conexión</p>';
                 });
         },
 
-        showDetail: (n) => {
-            // Reutilizamos el overlay de alerta roja pero con estilo "INFO" (Azul oscuro/Neutro)
-            // O creamos uno simple al vuelo.
+        startAutoRefresh: () => {
+            if (App.news.interval) clearInterval(App.news.interval);
+            App.news.interval = setInterval(() => {
+                const feedScreen = document.getElementById('screen-feed');
+                if (feedScreen && feedScreen.classList.contains('active')) {
+                    App.news.load(true);
+                }
+            }, 30000);
+        },
 
+        showDetail: (n) => {
             const overlay = document.createElement('div');
-            overlay.className = 'screen active'; // Usamos clase screen para ocupar todo
+            overlay.className = 'screen active';
             overlay.style.position = 'fixed';
             overlay.style.zIndex = '2000';
             overlay.style.background = 'rgba(15, 23, 42, 0.95)';
@@ -620,8 +629,9 @@ const App = {
             overlay.style.padding = '24px';
 
             let imgFull = "";
-            if (n.imagen && n.imagen.startsWith('http')) {
-                imgFull = `<img src="${n.imagen}" style="width:100%; border-radius:12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">`;
+            if (n.imagen && (n.imagen.startsWith('http') || n.imagen.startsWith('data:image'))) {
+                const cleanSrc = n.imagen.replace(/(\r\n|\n|\r)/gm, "");
+                imgFull = `<img src="${cleanSrc}" style="width:100%; border-radius:12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">`;
             }
 
             const date = new Date(n.fecha).toLocaleString();
@@ -645,18 +655,15 @@ const App = {
                 </div>
             `;
 
-            // Cerrar al click en botón X
             overlay.querySelector('button').onclick = () => {
                 overlay.style.opacity = '0';
                 setTimeout(() => document.body.removeChild(overlay), 300);
             };
 
-            // Animación entrada
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity 0.3s ease';
             document.body.appendChild(overlay);
 
-            // Trigger reflow
             setTimeout(() => overlay.style.opacity = '1', 10);
         }
     }
@@ -664,7 +671,7 @@ const App = {
 
 window.onload = () => {
     App.init();
-    // Cargar noticias y directorio
     App.news.load();
+    App.news.startAutoRefresh();
     App.directory.load();
 };
