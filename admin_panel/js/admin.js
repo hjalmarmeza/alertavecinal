@@ -97,6 +97,34 @@ const Admin = {
         // Load Data
         if (tabId === 'tab-users') Admin.loadUsers();
         if (tabId === 'tab-sos') Admin.loadSOSHistory();
+
+        // FIX: Force render Settings if empty (Cache issue fallback)
+        if (tabId === 'tab-config') {
+            const tab = document.getElementById('tab-config');
+            if (tab && !document.getElementById('conf-name')) {
+                tab.innerHTML = `
+                    <div class="card">
+                        <h3>Mi Perfil</h3>
+                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                            <img src="https://ui-avatars.com/api/?name=${Admin.user?.familia || 'Admin'}&background=random&size=64" style="border-radius:50%;" id="conf-avatar">
+                            <div>
+                                <strong style="display:block; font-size:1.1rem;" id="conf-name">${Admin.user?.familia || 'Cargando...'}</strong>
+                                <span style="color:var(--text-sec); font-size:0.9rem;" id="conf-role">${Admin.user?.rol || '...'}</span>
+                            </div>
+                        </div>
+                        <button class="btn-sm red" style="width:100%; padding:15px; font-size:1rem;" onclick="localStorage.clear(); window.location.href='../app_vecino/index.html'">
+                            CERRAR SESIÓN
+                        </button>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <h3>Acerca de</h3>
+                        <p style="color:var(--text-sec); font-size:0.9rem;">
+                            Alerta Vecinal v2.1 (Mobile)<br>Dev: Antigravity
+                        </p>
+                    </div>
+                 `;
+            }
+        }
     },
 
     toggleMaint: () => {
