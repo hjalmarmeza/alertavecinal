@@ -36,6 +36,13 @@ const App = {
     },
 
     checkMaintenance: () => {
+        // SEGURIDAD: Los Admins y Presidentes NO ven el bloqueo para poder trabajar
+        if (App.user && (App.user.rol === 'ADMIN' || App.user.rol === 'PRESIDENTE')) {
+            const overlay = document.getElementById('maintenance-screen');
+            if (overlay) overlay.style.display = 'none';
+            return;
+        }
+
         fetch(App.apiUrl + '?action=get_maint')
             .then(r => r.json())
             .then(data => {
