@@ -367,20 +367,25 @@ input:-webkit-autofill:active {
     background: rgba(30, 41, 59, 0.6);
     border: 1px solid var(--surface-border);
     backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 12px 0;
-    /* Menos padding */
+    border-radius: 14px;
+    padding: 10px 0;
+    /* Compacto */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    /* Menos gap */
     transition: transform 0.2s, background 0.2s;
     color: #fff;
+    min-height: 70px;
+    /* Altura controlada */
+    justify-content: center;
 }
 
 .btn-action.police {
     background: rgba(30, 41, 59, 0.6);
-    border-bottom: 3px solid #38bdf8;
+    border-bottom: 2px solid #38bdf8;
+    /* Borde más sutil */
     color: #fff;
 }
 
@@ -390,7 +395,8 @@ input:-webkit-autofill:active {
 
 .btn-action.fire {
     background: rgba(30, 41, 59, 0.6);
-    border-bottom: 3px solid #fb923c;
+    border-bottom: 2px solid #fb923c;
+    /* Borde más sutil */
     color: #fff;
 }
 
@@ -400,7 +406,8 @@ input:-webkit-autofill:active {
 
 .btn-action.serenazgo {
     background: rgba(30, 41, 59, 0.6);
-    border-bottom: 3px solid #a78bfa;
+    border-bottom: 2px solid #a78bfa;
+    /* Borde más sutil */
     color: #fff;
 }
 
@@ -414,12 +421,13 @@ input:-webkit-autofill:active {
 }
 
 .btn-action span.material-icons-round {
-    font-size: 2.22rem;
-    /* Aumentado un poco */
+    font-size: 1.8rem;
+    /* Icono más pequeño (antes 2.22rem) */
 }
 
 .btn-action span.label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    /* Texto más pequeño (antes 0.85rem) */
     font-weight: 600;
 }
 
