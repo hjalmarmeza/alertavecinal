@@ -10,6 +10,7 @@ const Admin = {
         // Cargar datos iniciales
         Admin.loadUsers();
         Admin.loadSOSHistory();
+        Admin.syncMaintSwitch(); // Sincronizar estado real del switch
     },
 
     checkAuth: () => {
@@ -38,13 +39,9 @@ const Admin = {
 
         // 3. SUPER PODER DEL ADMIN (Modo Mantenimiento y Config)
         if (rol === 'PRESIDENTE') {
-            // Ocultar Switch Mantenimiento
+            // El Presidente ve Directorio y Teléfonos, pero NO el control de Mantenimiento Global
             const maintDiv = document.querySelector('.maint-toggle');
-            if (maintDiv) maintDiv.style.display = 'none'; // Desaparece para el presidente
-
-            // Ocultar Tab Configuración
-            const configBtn = document.querySelector('button[onclick="Admin.nav(\'tab-config\')"]');
-            if (configBtn) configBtn.style.display = 'none';
+            if (maintDiv) maintDiv.style.display = 'none';
         }
 
         // 4. Update Config Tab Info
@@ -250,6 +247,16 @@ const Admin = {
                 }
             })
             .catch(e => alert("Error de conexión con servidor"));
+    },
+
+    syncMaintSwitch: () => {
+        fetch(Admin.apiUrl + '?action=get_maint')
+            .then(r => r.json())
+            .then(data => {
+                const sw = document.getElementById('maint-switch');
+                if (sw) sw.checked = data.isMaint;
+            })
+            .catch(e => console.error("Error sincronizando switch:", e));
     },
 
     loadUsers: () => {
