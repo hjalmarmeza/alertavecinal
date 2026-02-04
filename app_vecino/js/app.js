@@ -8,9 +8,6 @@ const App = {
         App.nav.init();
         App.panic.init();
         App.gps.init();
-        App.checkMaintenance();
-        App.loadConfig(); // NUEVO: Cargar teléfonos dinámicos
-        App.directory.load(); // NUEVO: Cargar directorio real
 
         // Listeners for Forms
         const regForm = document.getElementById('form-register');
@@ -32,6 +29,10 @@ const App = {
             // INICIAR ESCUCHA ACTIVA DE ALERTAS
             App.monitor.start();
         }
+
+        App.checkMaintenance();
+        App.loadConfig();
+        App.directory.load();
 
         // Intervalo de mantenimiento (cada 60 seg)
         setInterval(App.checkMaintenance, 60000);
