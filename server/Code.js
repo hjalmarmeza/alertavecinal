@@ -269,16 +269,16 @@ function saveAlert(p) {
 function sendTelegramMessage(text) {
     if (TELEGRAM_BOT_TOKEN === "PON_AQUI_TU_TOKEN" || !TELEGRAM_BOT_TOKEN) return "Error: Token no configurado";
 
+    // Simplificación extrema para garantizar envío
     var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
-    var payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
-        "text": text
-    };
 
     var options = {
         "method": "post",
-        "contentType": "application/json",
-        "payload": JSON.stringify(payload),
+        "payload": {
+            "chat_id": String(TELEGRAM_CHAT_ID),
+            "text": text,
+            "parse_mode": "HTML"
+        },
         "muteHttpExceptions": true
     };
 
