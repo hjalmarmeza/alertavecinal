@@ -357,4 +357,21 @@ const Admin = {
     }
 };
 
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
+        border-radius: 50px; z-index: 99999; font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+    `;
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
 window.onload = Admin.init;
