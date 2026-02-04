@@ -234,6 +234,7 @@ const App = {
 
 
     // --- PÁNICO (3 TOQUES) ---
+    // --- PÁNICO (3 TOQUES) ---
     panic: {
         taps: 0,
         lastTap: 0,
@@ -242,32 +243,54 @@ const App = {
             const btn = document.getElementById('btn-panic');
             if (!btn) return;
 
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
+            const handleTap = (e) => {
+                // FIX: Usar preventDefault en touch para evitar delay y conflictos
+                if (e.type === 'touchstart' && e.cancelable) {
+                    e.preventDefault();
+                }
+
+                // Evitar doble disparo (si click pasa el filtro de touch)
+                if (e.type === 'click' && App.panic.justTouched) {
+                    App.panic.justTouched = false;
+                    return;
+                }
+                if (e.type === 'touchstart') App.panic.justTouched = true;
+
                 const now = new Date().getTime();
                 if (now - App.panic.lastTap > 800) App.panic.taps = 0;
 
                 App.panic.taps++;
                 App.panic.lastTap = now;
 
+                // Feedback Húptico y Visual Inmediato
                 if (navigator.vibrate) navigator.vibrate(50);
                 btn.classList.add('active-tap');
-                setTimeout(() => btn.classList.remove('active-tap'), 100);
+                setTimeout(() => btn.classList.remove('active-tap'), 150);
 
                 if (App.panic.taps === 3) {
                     App.panic.trigger();
                     App.panic.taps = 0;
                 }
-            });
+            };
+
+            // Listener activo (passive: false) para poder cancelar el scroll/zoom en el botón
+            btn.addEventListener('touchstart', handleTap, { passive: false });
+            btn.addEventListener('click', handleTap);
         },
 
         trigger: () => {
             if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+
+            // 1. Enviar Alerta (Prioridad Red)
             App.api.sendAlert();
-            alert("🚨 ALERTA ENVIADA 🚨\n\nSe ha notificado vía Telegram a toda la comunidad y a la central.");
-            // Reset visual
-            const btn = document.getElementById('btn-panic');
-            if (btn) btn.classList.remove('active-tap');
+
+            // 2. Mostrar Alert visual (Diferido 300ms para asegurar que el request salga del movil)
+            setTimeout(() => {
+                alert("🚨 ALERTA ENVIADA 🚨\n\nSe ha notificado vía Telegram a toda la comunidad y a la central.");
+                // Reset visual extra por seguridad
+                const btn = document.getElementById('btn-panic');
+                if (btn) btn.classList.remove('active-tap');
+            }, 300);
         }
     },
 
