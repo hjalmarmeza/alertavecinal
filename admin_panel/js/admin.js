@@ -98,7 +98,7 @@ const Admin = {
         // FIX: Force render Settings if empty (Cache issue fallback)
         if (tabId === 'tab-config') {
             const tab = document.getElementById('tab-config');
-            if (tab && !document.getElementById('conf-name')) {
+            if (tab && !document.getElementById('cfg-phone-police')) {
                 tab.innerHTML = `
                     <div class="card">
                         <h3>Mi Perfil</h3>
