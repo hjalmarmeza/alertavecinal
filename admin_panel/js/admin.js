@@ -116,6 +116,39 @@ const Admin = {
                             CERRAR SESIÓN
                         </button>
                     </div>
+
+                    <!-- NUEVO: TELÉFONOS DE EMERGENCIA -->
+                    <div class="card" style="margin-top:20px;">
+                        <h3>Números de Emergencia (Botones App)</h3>
+                        <div style="display:grid; gap:10px;">
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-sec);">Policía:</label>
+                                <input type="text" id="cfg-phone-police" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-sec);">Bomberos:</label>
+                                <input type="text" id="cfg-phone-fire" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-sec);">Serenazgo:</label>
+                                <input type="text" id="cfg-phone-serenazgo" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
+                            </div>
+                            <button class="btn-sm green" style="width:100%; margin-top:10px;" onclick="Admin.saveConfig()">GUARDAR TELÉFONOS</button>
+                        </div>
+                    </div>
+
+                    <!-- NUEVO: DIRECTORIO -->
+                    <div class="card" style="margin-top:20px;">
+                        <h3>Directorio Vecinal</h3>
+                        <div id="dir-editor" style="display:grid; gap:10px;">
+                            <div id="dir-list-container" style="max-height:300px; overflow-y:auto; margin-bottom:10px;">
+                                <!-- Directorio dinámico -->
+                            </div>
+                            <button class="btn-sm" onclick="Admin.addDirRow()">+ AGREGAR CONTACTO</button>
+                            <button class="btn-sm green" style="width:100%; margin-top:10px;" onclick="Admin.saveDirectory()">GUARDAR DIRECTORIO</button>
+                        </div>
+                    </div>
+
                     <div class="card" style="margin-top:20px;">
                         <h3>Acerca de</h3>
                         <p style="color:var(--text-sec); font-size:0.9rem;">
@@ -123,8 +156,86 @@ const Admin = {
                         </p>
                     </div>
                  `;
+                Admin.loadConfig();
+                Admin.loadDirectory();
             }
         }
+    },
+
+    loadConfig: () => {
+        fetch(Admin.apiUrl + '?action=get_config')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('cfg-phone-police').value = data.phones.police;
+                    document.getElementById('cfg-phone-fire').value = data.phones.fire;
+                    document.getElementById('cfg-phone-serenazgo').value = data.phones.serenazgo;
+                }
+            });
+    },
+
+    saveConfig: () => {
+        const p = document.getElementById('cfg-phone-police').value;
+        const f = document.getElementById('cfg-phone-fire').value;
+        const s = document.getElementById('cfg-phone-serenazgo').value;
+        fetch(Admin.apiUrl + '?action=save_config&police=' + p + '&fire=' + f + '&serenazgo=' + s)
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') showToast("Números actualizados correctamente");
+                else alert("Error guardando configuración");
+            });
+    },
+
+    loadDirectory: () => {
+        fetch(Admin.apiUrl + '?action=get_dir')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('dir-list-container');
+                if (!container) return;
+                container.innerHTML = "";
+                if (data.status === 'success' && data.data.length > 0) {
+                    data.data.forEach(item => Admin.addDirRow(item));
+                }
+            });
+    },
+
+    addDirRow: (data = { nombre: '', cargo: '', telf: '' }) => {
+        const container = document.getElementById('dir-list-container');
+        const div = document.createElement('div');
+        div.className = "dir-row";
+        div.style.cssText = "display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:5px; margin-bottom:5px; align-items:center;";
+        div.innerHTML = `
+            <input type="text" placeholder="Nombre" value="${data.nombre}" class="dir-name" style="background:rgba(0,0,0,0.1); border:1px solid var(--border); color:white; padding:5px; border-radius:4px; font-size:0.8rem;">
+            <input type="text" placeholder="Cargo" value="${data.cargo}" class="dir-cargo" style="background:rgba(0,0,0,0.1); border:1px solid var(--border); color:white; padding:5px; border-radius:4px; font-size:0.8rem;">
+            <input type="text" placeholder="Teléf" value="${data.telf}" class="dir-telf" style="background:rgba(0,0,0,0.1); border:1px solid var(--border); color:white; padding:5px; border-radius:4px; font-size:0.8rem;">
+            <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#f43f5e; padding:5px;"><span class="material-icons-round" style="font-size:1.2rem;">delete</span></button>
+        `;
+        container.appendChild(div);
+    },
+
+    saveDirectory: () => {
+        const rows = document.querySelectorAll('.dir-row');
+        const list = [];
+        rows.forEach(r => {
+            const name = r.querySelector('.dir-name').value;
+            const cargo = r.querySelector('.dir-cargo').value;
+            const telf = r.querySelector('.dir-telf').value;
+            if (name || cargo || telf) list.push({ nombre: name, cargo: cargo, telf: telf });
+        });
+
+        const formData = new URLSearchParams();
+        formData.append('action', 'save_dir');
+        formData.append('data', JSON.stringify(list));
+
+        fetch(Admin.apiUrl, {
+            method: 'POST',
+            body: formData
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') showToast("Directorio guardado");
+                else alert("Error guardando directorio");
+            });
     },
 
     toggleMaint: () => {

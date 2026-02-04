@@ -53,8 +53,12 @@ function handleRequest(e) {
         else if (action === "report_incident") result = saveIncident(params);
         else if (action === "save_news") result = saveNews(params);
         else if (action === "get_news") result = getNews();
-        else if (action === "toggle_maint") result = toggleMaint(params); // NUEVO
-        else if (action === "get_maint") result = getMaintStatus(); // NUEVO
+        else if (action === "toggle_maint") result = toggleMaint(params);
+        else if (action === "get_maint") result = getMaintStatus();
+        else if (action === "get_config") result = getAppConfig(); // NUEVO
+        else if (action === "save_config") result = saveAppConfig(params); // NUEVO
+        else if (action === "get_dir") result = getDirectory(); // NUEVO
+        else if (action === "save_dir") result = saveDirectory(params); // NUEVO
         else result = { status: "error", message: "Action unknown: " + action };
 
     } catch (error) {
@@ -436,6 +440,7 @@ function getSheet(name) {
         if (name === "Usuarios") sheet.appendRow(["ID", "Email", "Password", "Nombre", "Familia", "Urbanización", "Dirección", "Mz", "Lote", "GPS", "Fecha Registro", "Estado"]);
         if (name === "Alertas") sheet.appendRow(["ID", "Usuario", "Tipo", "GPS", "Fecha", "Estado"]);
         if (name === "Reportes") sheet.appendRow(["ID", "Fecha", "Usuario", "Familia", "Tipo", "Descripción", "GPS", "Imagen"]);
+        if (name === "Directorio") sheet.appendRow(["Nombre", "Cargo", "Telefono"]);
     }
     return sheet;
 }
@@ -643,4 +648,48 @@ function toggleMaint(p) {
 function getMaintStatus() {
     var status = PropertiesService.getScriptProperties().getProperty('MAINTENANCE_MODE') === 'true';
     return { status: "success", isMaint: status };
+}
+
+// --- CONFIG APP (TELÉFONOS) ---
+function getAppConfig() {
+    var props = PropertiesService.getScriptProperties();
+    return {
+        status: "success",
+        phones: {
+            police: props.getProperty('PHONE_POLICE') || "105",
+            fire: props.getProperty('PHONE_FIRE') || "116",
+            serenazgo: props.getProperty('PHONE_SERENAZGO') || "01 234 5678" // Ejemplo
+        }
+    };
+}
+
+function saveAppConfig(p) {
+    var props = PropertiesService.getScriptProperties();
+    if (p.police) props.setProperty('PHONE_POLICE', p.police);
+    if (p.fire) props.setProperty('PHONE_FIRE', p.fire);
+    if (p.serenazgo) props.setProperty('PHONE_SERENAZGO', p.serenazgo);
+    return { status: "success", message: "Números actualizados" };
+}
+
+// --- DIRECTORIO ---
+function getDirectory() {
+    var sheet = getSheet("Directorio");
+    var data = sheet.getDataRange().getValues();
+    var dir = [];
+    for (var i = 1; i < data.length; i++) {
+        dir.push({ nombre: data[i][0], cargo: data[i][1], telf: data[i][2] });
+    }
+    return { status: "success", data: dir };
+}
+
+function saveDirectory(p) {
+    var sheet = getSheet("Directorio");
+    sheet.clearContents();
+    sheet.appendRow(["Nombre", "Cargo", "Telefono"]);
+
+    var list = JSON.parse(p.data);
+    list.forEach(item => {
+        sheet.appendRow([item.nombre, item.cargo, item.telf]);
+    });
+    return { status: "success", message: "Directorio actualizado" };
 }

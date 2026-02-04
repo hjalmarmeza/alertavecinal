@@ -8,7 +8,9 @@ const App = {
         App.nav.init();
         App.panic.init();
         App.gps.init();
-        App.checkMaintenance(); // Verificar si la app está bloqueada
+        App.checkMaintenance();
+        App.loadConfig(); // NUEVO: Cargar teléfonos dinámicos
+        App.directory.load(); // NUEVO: Cargar directorio real
 
         // Listeners for Forms
         const regForm = document.getElementById('form-register');
@@ -55,6 +57,22 @@ const App = {
                 }
             })
             .catch(e => console.error("Err Maint:", e));
+    },
+
+    config: {
+        police: '105',
+        fire: '116',
+        serenazgo: '01 222 3333'
+    },
+
+    loadConfig: () => {
+        fetch(App.apiUrl + '?action=get_config')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    App.config = data.phones;
+                }
+            });
     },
 
     updateUI: () => {
@@ -391,49 +409,55 @@ const App = {
 
     // --- DIRECTORIO ---
     directory: {
-        data: [
-            { name: "Comisaría Sectorial", phone: "105", icon: "local_police", desc: "Emergencias Policiales" },
-            { name: "Bomberos Voluntarios", phone: "116", icon: "local_fire_department", desc: "Incendios y Rescates" },
-            { name: "Serenazgo Central", phone: "014444444", icon: "security", desc: "Patrullaje Municipal" },
-            { name: "Centro de Salud", phone: "113", icon: "medical_services", desc: "Atención Médica Urgente" },
-            { name: "Gasfitero Zonal", phone: "999000111", icon: "plumbing", desc: "Servicio Técnico" },
-            { name: "Electricista", phone: "999000222", icon: "electric_bolt", desc: "Servicio Técnico" }
-        ],
         load: () => {
             const container = document.querySelector('#screen-directory .scroll-content');
             if (!container) return;
 
-            container.innerHTML = `
-                <div class="header-simple"><h2>Directorio</h2></div>
-                <h3 style="margin:10px 0 20px; color:var(--text-sec); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Números de Emergencia</h3>
-                <div class="directory-list"></div>
-             `;
-            const list = container.querySelector('.directory-list');
+            container.innerHTML = `<div style="text-align:center; padding:40px;"><span class="material-icons-round" style="animation:spin 1s infinite">refresh</span></div>`;
 
-            App.directory.data.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'contact-card';
-                el.innerHTML = `
-                    <div style="display:flex; align-items:center; flex:1;">
-                        <div class="contact-avatar">
-                            <span class="material-icons-round">${item.icon}</span>
-                        </div>
-                        <div class="contact-info">
-                            <h4>${item.name}</h4>
-                            <p>${item.desc}</p>
-                        </div>
-                    </div>
-                    <button class="btn-call" onclick="App.call('${item.phone}')">
-                        <span class="material-icons-round">call</span>
-                    </button>
-                 `;
-                list.appendChild(el);
-            });
+            fetch(App.apiUrl + '?action=get_dir')
+                .then(r => r.json())
+                .then(data => {
+                    container.innerHTML = `
+                        <div class="header-simple"><h2>Directorio</h2></div>
+                        <h3 style="margin:10px 0 20px; color:var(--text-sec); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Directorio de Contactos</h3>
+                        <div class="directory-list"></div>
+                    `;
+                    const list = container.querySelector('.directory-list');
+
+                    if (data.status === 'success' && data.data.length > 0) {
+                        data.data.forEach(item => {
+                            const el = document.createElement('div');
+                            el.className = 'contact-card';
+                            el.innerHTML = `
+                                <div style="display:flex; align-items:center; flex:1;">
+                                    <div class="contact-avatar">
+                                        <span class="material-icons-round">person</span>
+                                    </div>
+                                    <div class="contact-info">
+                                        <h4>${item.nombre}</h4>
+                                        <p>${item.cargo}</p>
+                                    </div>
+                                </div>
+                                <button class="btn-call" onclick="App.call('${item.telf}')">
+                                    <span class="material-icons-round">call</span>
+                                </button>
+                            `;
+                            list.appendChild(el);
+                        });
+                    } else {
+                        list.innerHTML = "<p style='text-align:center; padding:20px; opacity:0.6;'>No hay contactos registrados.</p>";
+                    }
+                });
         }
     },
 
-    call: (number) => {
-        if (number === 'admin') number = '999999999';
+    call: (type) => {
+        let number = type;
+        if (type === 'police') number = App.config.police;
+        if (type === 'fire') number = App.config.fire;
+        if (type === 'serenazgo' || type === 'admin') number = App.config.serenazgo;
+
         window.location.href = `tel:${number}`;
     },
 
