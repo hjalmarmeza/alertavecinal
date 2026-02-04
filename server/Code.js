@@ -122,6 +122,7 @@ function getUsers() {
             direccion: row[6],
             mz: row[7],
             lote: row[8],
+            rol: row[11], // NUEVO: Incluir rol
             status: st // Status REAL detectado
         });
     }

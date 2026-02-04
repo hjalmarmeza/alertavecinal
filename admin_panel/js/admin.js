@@ -169,11 +169,14 @@ const Admin = {
                         if (u.status !== 'ACTIVO' && u.status !== 'PRESIDENTE') return false;
 
                         // 2. Nunca mostrar al ADMIN supremo
-                        if (u.rol === 'ADMIN') return false;
+                        if (u.rol === 'ADMIN' || u.status === 'ADMIN') return false;
 
-                        // 3. Si soy PRESIDENTE, no ver a otros PRESIDENTES (ni a mí mismo)
+                        // 3. NO mostrarse a sí mismo (Seguridad: el admin no se autogestiona)
+                        if (Admin.user && u.email === Admin.user.email) return false;
+
+                        // 4. Si soy PRESIDENTE, no ver a otros PRESIDENTES
                         if (Admin.user && Admin.user.rol === 'PRESIDENTE') {
-                            if (u.rol === 'PRESIDENTE') return false;
+                            if (u.rol === 'PRESIDENTE' || u.status === 'PRESIDENTE') return false;
                         }
 
                         return true;
