@@ -11,6 +11,10 @@ const Admin = {
         Admin.loadUsers();
         Admin.loadSOSHistory();
         Admin.syncMaintSwitch(); // Sincronizar estado real del switch
+
+        // Cargar config y directorio desde el inicio para que estén listos
+        Admin.loadConfig();
+        Admin.loadDirectory();
     },
 
     checkAuth: () => {
@@ -121,11 +125,19 @@ const Admin = {
         const p = document.getElementById('cfg-phone-police').value;
         const f = document.getElementById('cfg-phone-fire').value;
         const s = document.getElementById('cfg-phone-serenazgo').value;
-        fetch(Admin.apiUrl + '?action=save_config&police=' + p + '&fire=' + f + '&serenazgo=' + s)
+
+        // Usar GET para máxima compatibilidad con GAS
+        const query = `?action=save_config&police=${encodeURIComponent(p)}&fire=${encodeURIComponent(f)}&serenazgo=${encodeURIComponent(s)}`;
+
+        fetch(Admin.apiUrl + query)
             .then(r => r.json())
             .then(data => {
-                if (data.status === 'success') showToast("Números actualizados correctamente");
-                else alert("Error guardando configuración");
+                if (data.status === 'success') {
+                    showToast("Números guardados en Sheet");
+                    Admin.loadConfig(); // Recargar para confirmar
+                } else {
+                    alert("Error: " + data.message);
+                }
             });
     },
 
@@ -166,18 +178,18 @@ const Admin = {
             if (name || cargo || telf) list.push({ nombre: name, cargo: cargo, telf: telf });
         });
 
-        const formData = new URLSearchParams();
-        formData.append('action', 'save_dir');
-        formData.append('data', JSON.stringify(list));
+        // Usar GET para enviar el JSON como parámetro (más confiable para GAS)
+        const query = `?action=save_dir&data=${encodeURIComponent(JSON.stringify(list))}`;
 
-        fetch(Admin.apiUrl, {
-            method: 'POST',
-            body: formData
-        })
+        fetch(Admin.apiUrl + query)
             .then(r => r.json())
             .then(data => {
-                if (data.status === 'success') showToast("Directorio guardado");
-                else alert("Error guardando directorio");
+                if (data.status === 'success') {
+                    showToast("Directorio guardado");
+                    Admin.loadDirectory(); // Recargar para confirmar
+                } else {
+                    alert("Error: " + data.message);
+                }
             });
     },
 

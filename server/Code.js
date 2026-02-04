@@ -441,6 +441,7 @@ function getSheet(name) {
         if (name === "Alertas") sheet.appendRow(["ID", "Usuario", "Tipo", "GPS", "Fecha", "Estado"]);
         if (name === "Reportes") sheet.appendRow(["ID", "Fecha", "Usuario", "Familia", "Tipo", "Descripción", "GPS", "Imagen"]);
         if (name === "Directorio") sheet.appendRow(["Nombre", "Cargo", "Telefono"]);
+        if (name === "Configuracion") sheet.appendRow(["Clave", "Valor"]);
     }
     return sheet;
 }
@@ -650,25 +651,47 @@ function getMaintStatus() {
     return { status: "success", isMaint: status };
 }
 
-// --- CONFIG APP (TELÉFONOS) ---
+// --- CONFIG APP (TELÉFONOS EN SHEET) ---
 function getAppConfig() {
-    var props = PropertiesService.getScriptProperties();
+    var sheet = getSheet("Configuracion");
+    var data = sheet.getDataRange().getValues();
+    var config = {};
+    for (var i = 1; i < data.length; i++) {
+        config[data[i][0]] = data[i][1];
+    }
+
     return {
         status: "success",
         phones: {
-            police: props.getProperty('PHONE_POLICE') || "105",
-            fire: props.getProperty('PHONE_FIRE') || "116",
-            serenazgo: props.getProperty('PHONE_SERENAZGO') || "01 234 5678" // Ejemplo
+            police: config['PHONE_POLICE'] || "105",
+            fire: config['PHONE_FIRE'] || "116",
+            serenazgo: config['PHONE_SERENAZGO'] || "01 234 5678"
         }
     };
 }
 
 function saveAppConfig(p) {
-    var props = PropertiesService.getScriptProperties();
-    if (p.police) props.setProperty('PHONE_POLICE', p.police);
-    if (p.fire) props.setProperty('PHONE_FIRE', p.fire);
-    if (p.serenazgo) props.setProperty('PHONE_SERENAZGO', p.serenazgo);
-    return { status: "success", message: "Números actualizados" };
+    var sheet = getSheet("Configuracion");
+    var data = sheet.getDataRange().getValues();
+
+    function setVal(key, val) {
+        if (!val) return;
+        var found = false;
+        for (var i = 1; i < data.length; i++) {
+            if (data[i][0] == key) {
+                sheet.getRange(i + 1, 2).setValue(val);
+                found = true;
+                break;
+            }
+        }
+        if (!found) sheet.appendRow([key, val]);
+    }
+
+    setVal('PHONE_POLICE', p.police);
+    setVal('PHONE_FIRE', p.fire);
+    setVal('PHONE_SERENAZGO', p.serenazgo);
+
+    return { status: "success", message: "Números actualizados en Sheet" };
 }
 
 // --- DIRECTORIO ---
