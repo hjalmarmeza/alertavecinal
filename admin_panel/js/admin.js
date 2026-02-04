@@ -95,67 +95,10 @@ const Admin = {
         if (tabId === 'tab-users') Admin.loadUsers();
         if (tabId === 'tab-sos') Admin.loadSOSHistory();
 
-        // FIX: Force render Settings if empty (Cache issue fallback)
+        // Cargar Datos de Configuración cuando se entra a la pestaña
         if (tabId === 'tab-config') {
-            const tab = document.getElementById('tab-config');
-            if (tab && !document.getElementById('cfg-phone-police')) {
-                tab.innerHTML = `
-                    <div class="card">
-                        <h3>Mi Perfil</h3>
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-                            <img src="https://ui-avatars.com/api/?name=${Admin.user?.familia || 'Admin'}&background=random&size=64" style="border-radius:50%;" id="conf-avatar">
-                            <div>
-                                <strong style="display:block; font-size:1.1rem;" id="conf-name">${Admin.user?.familia || 'Cargando...'}</strong>
-                                <span style="color:var(--text-sec); font-size:0.9rem;" id="conf-role">${Admin.user?.rol || '...'}</span>
-                            </div>
-                        </div>
-                        <button class="btn-sm red" style="width:100%; padding:15px; font-size:1rem;" onclick="localStorage.clear(); window.location.href='../app_vecino/index.html'">
-                            CERRAR SESIÓN
-                        </button>
-                    </div>
-
-                    <!-- NUEVO: TELÉFONOS DE EMERGENCIA -->
-                    <div class="card" style="margin-top:20px;">
-                        <h3>Números de Emergencia (Botones App)</h3>
-                        <div style="display:grid; gap:10px;">
-                            <div>
-                                <label style="font-size:0.8rem; color:var(--text-sec);">Policía:</label>
-                                <input type="text" id="cfg-phone-police" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
-                            </div>
-                            <div>
-                                <label style="font-size:0.8rem; color:var(--text-sec);">Bomberos:</label>
-                                <input type="text" id="cfg-phone-fire" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
-                            </div>
-                            <div>
-                                <label style="font-size:0.8rem; color:var(--text-sec);">Serenazgo:</label>
-                                <input type="text" id="cfg-phone-serenazgo" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:white; padding:10px; border-radius:8px;">
-                            </div>
-                            <button class="btn-sm green" style="width:100%; margin-top:10px;" onclick="Admin.saveConfig()">GUARDAR TELÉFONOS</button>
-                        </div>
-                    </div>
-
-                    <!-- NUEVO: DIRECTORIO -->
-                    <div class="card" style="margin-top:20px;">
-                        <h3>Directorio Vecinal</h3>
-                        <div id="dir-editor" style="display:grid; gap:10px;">
-                            <div id="dir-list-container" style="max-height:300px; overflow-y:auto; margin-bottom:10px;">
-                                <!-- Directorio dinámico -->
-                            </div>
-                            <button class="btn-sm" onclick="Admin.addDirRow()">+ AGREGAR CONTACTO</button>
-                            <button class="btn-sm green" style="width:100%; margin-top:10px;" onclick="Admin.saveDirectory()">GUARDAR DIRECTORIO</button>
-                        </div>
-                    </div>
-
-                    <div class="card" style="margin-top:20px;">
-                        <h3>Acerca de</h3>
-                        <p style="color:var(--text-sec); font-size:0.9rem;">
-                            Alerta Vecinal v2.1 (Mobile)<br>Premium Build
-                        </p>
-                    </div>
-                 `;
-                Admin.loadConfig();
-                Admin.loadDirectory();
-            }
+            Admin.loadConfig();
+            Admin.loadDirectory();
         }
     },
 
