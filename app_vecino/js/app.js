@@ -36,8 +36,9 @@ const App = {
     },
 
     checkMaintenance: () => {
-        // SEGURIDAD: Los Admins y Presidentes NO ven el bloqueo para poder trabajar
-        if (App.user && (App.user.rol === 'ADMIN' || App.user.rol === 'PRESIDENTE')) {
+        // SEGURIDAD: Solo el SUPER ADMIN (hjalmar) puede saltarse el bloqueo para dar mantenimiento.
+        // El Presidente y los Vecinos deben ver el bloqueo.
+        if (App.user && App.user.rol === 'ADMIN') {
             const overlay = document.getElementById('maintenance-screen');
             if (overlay) overlay.style.display = 'none';
             return;
