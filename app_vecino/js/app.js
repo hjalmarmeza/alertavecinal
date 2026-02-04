@@ -67,7 +67,7 @@ const App = {
     },
 
     loadConfig: () => {
-        fetch(App.apiUrl + '?action=get_config')
+        fetch(App.apiUrl + '?action=get_config&_=' + Date.now())
             .then(r => r.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -410,7 +410,7 @@ const App = {
 
             container.innerHTML = `<div style="text-align:center; padding:40px;"><span class="material-icons-round" style="animation:spin 1s infinite">refresh</span></div>`;
 
-            fetch(App.apiUrl + '?action=get_dir')
+            fetch(App.apiUrl + '?action=get_dir&_=' + Date.now())
                 .then(r => r.json())
                 .then(data => {
                     container.innerHTML = `

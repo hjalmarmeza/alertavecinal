@@ -691,6 +691,7 @@ function saveAppConfig(p) {
     setVal('PHONE_FIRE', p.fire);
     setVal('PHONE_SERENAZGO', p.serenazgo);
 
+    SpreadsheetApp.flush(); // FORZAR GUARDADO INMEDIATO
     return { status: "success", message: "Números actualizados en Sheet" };
 }
 
@@ -707,12 +708,15 @@ function getDirectory() {
 
 function saveDirectory(p) {
     var sheet = getSheet("Directorio");
-    sheet.clearContents();
+    sheet.clear(); // Limpiar TODO (formatos y contenido) para empezar de cero
     sheet.appendRow(["Nombre", "Cargo", "Telefono"]);
 
-    var list = JSON.parse(p.data);
-    list.forEach(item => {
-        sheet.appendRow([item.nombre, item.cargo, item.telf]);
-    });
+    var data = JSON.parse(p.data);
+    if (data && data.length > 0) {
+        data.forEach(item => {
+            sheet.appendRow([item.nombre, item.cargo, item.telf]);
+        });
+    }
+    SpreadsheetApp.flush(); // FORZAR GUARDADO INMEDIATO
     return { status: "success", message: "Directorio actualizado" };
 }

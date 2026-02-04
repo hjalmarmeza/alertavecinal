@@ -110,7 +110,7 @@ const Admin = {
     },
 
     loadConfig: () => {
-        fetch(Admin.apiUrl + '?action=get_config')
+        fetch(Admin.apiUrl + '?action=get_config&_=' + Date.now())
             .then(r => r.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -142,7 +142,7 @@ const Admin = {
     },
 
     loadDirectory: () => {
-        fetch(Admin.apiUrl + '?action=get_dir')
+        fetch(Admin.apiUrl + '?action=get_dir&_=' + Date.now())
             .then(r => r.json())
             .then(data => {
                 const container = document.getElementById('dir-list-container');
