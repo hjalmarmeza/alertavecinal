@@ -298,18 +298,12 @@ const App = {
     // --- API ---
     api: {
         sendAlert: () => {
-            fetch(App.apiUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    action: 'send_alert',
-                    user_id: App.user?.email || 'anon',
-                    familia: App.user?.familia || 'Vecino',
-                    direccion: App.user ? `Mz ${App.user.mz} Lt ${App.user.lote}` : 'S/N',
-                    coords: App.gps.current
-                })
-            });
+            if (!App.user) return;
+            // Usamos GET con parámetros para asegurar que Google Script procese la alerta correctamente
+            const query = `?action=send_alert&user_id=${encodeURIComponent(App.user.email)}&familia=${encodeURIComponent(App.user.familia)}&direccion=${encodeURIComponent("Mz " + App.user.mz + " Lt " + App.user.lote)}&coords=${encodeURIComponent(App.gps.current || "0,0")}`;
+
+            fetch(App.apiUrl + query, { mode: 'no-cors' })
+                .catch(err => console.error("SOS Fetch Error:", err));
         }
     },
 

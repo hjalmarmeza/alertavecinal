@@ -267,7 +267,7 @@ function saveAlert(p) {
 }
 
 function sendTelegramMessage(text) {
-    if (TELEGRAM_BOT_TOKEN === "TU_TOKEN_AQUI" || !TELEGRAM_BOT_TOKEN) return "Error: Token no configurado";
+    if (TELEGRAM_BOT_TOKEN === "PON_AQUI_TU_TOKEN" || !TELEGRAM_BOT_TOKEN) return "Error: Token no configurado";
 
     var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
     var payload = {
@@ -364,7 +364,7 @@ function loginUser(p) {
     return { status: "error", message: "Correo o contraseña incorrectos." };
 }
 
-// ... UTILS ...
+// --- UTILS ---
 
 function resolveUser(p) {
     var sheet = getSheet("Usuarios");

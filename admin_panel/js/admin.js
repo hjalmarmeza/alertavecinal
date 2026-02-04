@@ -40,8 +40,11 @@ const Admin = {
         // 3. SUPER PODER DEL ADMIN (Modo Mantenimiento y Config)
         if (rol === 'PRESIDENTE') {
             // El Presidente ve Directorio y Teléfonos, pero NO el control de Mantenimiento Global
-            const maintDiv = document.querySelector('.maint-toggle');
-            if (maintDiv) maintDiv.style.display = 'none';
+            document.querySelectorAll('.maint-toggle').forEach(d => d.style.display = 'none');
+
+            // Forzar que las secciones de configuración SE VEAN
+            const configTab = document.getElementById('tab-config');
+            if (configTab) configTab.style.display = 'block';
         }
 
         // 4. Update Config Tab Info
