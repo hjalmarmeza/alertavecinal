@@ -267,33 +267,62 @@ function saveAlert(p) {
 }
 
 function sendTelegramMessage(text) {
-    if (TELEGRAM_BOT_TOKEN === "PON_AQUI_TU_TOKEN" || !TELEGRAM_BOT_TOKEN) return "Error: Token no configurado";
-
-    // Simplificación extrema para garantizar envío
-    var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
-
-    var options = {
-        "method": "post",
-        "payload": {
-            "chat_id": String(TELEGRAM_CHAT_ID),
-            "text": text,
-            "parse_mode": "HTML"
-        },
-        "muteHttpExceptions": true
-    };
-
-    var response = UrlFetchApp.fetch(url, options);
-    var content = response.getContentText();
-    var code = response.getResponseCode();
-
-    console.log("Telegram Response Code: " + code);
-    console.log("Telegram Body: " + content);
-
-    if (code !== 200) {
-        throw new Error("Telegram FAILED (" + code + "): " + content);
+    if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.indexOf("PON_AQUI") !== -1) {
+        return "Error: Token no configurado";
     }
 
-    return content;
+    var chatId = String(TELEGRAM_CHAT_ID).trim();
+
+    // INTENTO 1: JSON Payload (Estándar Moderno)
+    try {
+        var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
+        var payload = {
+            "chat_id": chatId,
+            "text": text,
+            "parse_mode": "HTML"
+        };
+
+        var options = {
+            "method": "post",
+            "contentType": "application/json",
+            "payload": JSON.stringify(payload),
+            "muteHttpExceptions": true
+        };
+
+        var response = UrlFetchApp.fetch(url, options);
+        var code = response.getResponseCode();
+        var content = response.getContentText();
+
+        if (code === 200) {
+            console.log("Telegram sent OK (JSON)");
+            return content;
+        } else {
+            console.warn("Telegram JSON failed (" + code + "): " + content);
+            // Si falla, pasamos al Intento 2
+        }
+    } catch (e) {
+        console.error("Telegram Error Link 1: " + e);
+    }
+
+    // INTENTO 2: Query Parameters (Método "Nuclear" compatible con todo)
+    try {
+        console.log("Intentando método alternativo por URL...");
+        var encodedText = encodeURIComponent(text);
+        var fallbackUrl = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage?chat_id=" + chatId + "&text=" + encodedText;
+
+        var options2 = {
+            "method": "post",
+            "muteHttpExceptions": true
+        };
+
+        var response2 = UrlFetchApp.fetch(fallbackUrl, options2);
+        console.log("Telegram Fallback Code: " + response2.getResponseCode());
+        return response2.getContentText();
+
+    } catch (e) {
+        console.error("Telegram CRITICAL FAILURE: " + e);
+        throw new Error("Telegram falló completamente: " + e);
+    }
 }
 
 function loginUser(p) {
