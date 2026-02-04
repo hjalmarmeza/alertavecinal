@@ -240,7 +240,8 @@ function saveAlert(p) {
         "👤 Familia: " + (p.familia || p.user_id) + "\n" +
         "📍 Ubicación: " + (p.direccion || "Ubicación GPS") + "\n" +
         "⏰ Hora: " + new Date().toLocaleTimeString() + "\n\n" +
-        "🗺 Ver Mapa: " + mapLink;
+        "🗺 Ver Mapa: " + mapLink + "\n\n" +
+        "⚠️ ABRE LA APP PARA CONFIRMAR RECEPCIÓN";
 
     try {
         console.log("Intentando enviar Telegram a: " + TELEGRAM_CHAT_ID);
