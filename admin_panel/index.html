@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel de Control - Alerta Vecinal</title>
-    <link rel="stylesheet" href="css/style.css?v=premium_5.4">
+    <link rel="stylesheet" href="css/style.css?v=premium_5.5">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -152,7 +152,13 @@
 
                 <!-- NUEVO: TELÉFONOS DE EMERGENCIA -->
                 <div class="card" style="margin-top:20px;">
-                    <h3>Números de Emergencia (Botones App)</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="margin:0;">Teléfonos de Emergencia</h3>
+                        <button onclick="Admin.loadConfig(); showToast('Números cargados');"
+                            style="background:none; border:none; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:600;">
+                            <span class="material-icons-round" style="font-size:1.2rem;">refresh</span> REFRESCAR
+                        </button>
+                    </div>
                     <div style="display:grid; gap:10px;">
                         <div>
                             <label style="font-size:0.8rem; color:var(--text-sec);">Policía:</label>
@@ -177,7 +183,13 @@
 
                 <!-- NUEVO: DIRECTORIO -->
                 <div class="card" style="margin-top:20px;">
-                    <h3>Directorio Vecinal</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="margin:0;">Directorio Vecinal</h3>
+                        <button onclick="Admin.loadDirectory(); showToast('Directorio actualizado');"
+                            style="background:none; border:none; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:600;">
+                            <span class="material-icons-round" style="font-size:1.2rem;">refresh</span> REFRESCAR
+                        </button>
+                    </div>
                     <div id="dir-editor" style="display:grid; gap:10px;">
                         <div id="dir-list-container" style="max-height:300px; overflow-y:auto; margin-bottom:10px;">
                             <!-- Directorio dinámico -->
@@ -217,7 +229,7 @@
         </button>
     </nav>
 
-    <script src="js/admin.js?v=premium_5.4"></script>
+    <script src="js/admin.js?v=premium_5.5"></script>
 </body>
 
 </html>
