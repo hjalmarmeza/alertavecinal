@@ -292,6 +292,29 @@
     </section>
 
     <script src="js/app.js?v=premium_5.6"></script>
+    <script>
+        // Registro de Service Worker para actualizaciones automáticas
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('SW registrado: ', reg.scope);
+                        // Detectar nueva actualización
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nueva versión disponible, recargar pantalla para aplicarla
+                                    console.log('Nueva versión detectada. Actualizando...');
+                                    window.location.reload(); 
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.log('SW fallo: ', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

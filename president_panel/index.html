@@ -136,6 +136,26 @@
     </div>
 
     <script src="js/president.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('SW Presidencia registrado');
+                        reg.onupdatefound = () => {
+                            const newWorker = reg.installing;
+                            newWorker.onstatechange = () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    if (confirm('Nueva actualización para Presidencia disponible. ¿Recargar?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            };
+                        };
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>
