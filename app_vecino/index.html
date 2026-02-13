@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Alerta Vecinal</title>
-    <link rel="stylesheet" href="css/style.css?v=premium_5.9">
+    <link rel="stylesheet" href="css/style.css?v=premium_6.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
             <button onclick="App.nav.to('screen-login')" class="btn-icon-back">
                 <span class="material-icons-round">arrow_back</span>
             </button>
-            <h2 style="font-size: 1.5rem; font-weight: 700;">Crear Cuenta</h2>
+            <h2 style="font-size: 1.5rem; font-weight: 700;">Crear mi Cuenta</h2>
             <div style="width: 44px;"></div> <!-- Spacer -->
         </div>
 
@@ -291,31 +291,29 @@
             style="width: 100%; height: 100%; border: none; background: #0f172a;"></iframe>
     </section>
 
-    <script src="js/app.js?v=premium_5.8"></script>
+    <script src="js/app.js?v=premium_6.0"></script>
     <script>
         // Registro de Service Worker para actualizaciones automáticas
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Forzamos la revalidación con un parámetro dinámico para iOS
-                navigator.serviceWorker.register('./sw.js?v=2.2')
+                navigator.serviceWorker.register('./sw.js?v=3.5')
                     .then(reg => {
                         console.log('SW registrado: ', reg.scope);
 
-                        // Forzar chequeo de actualización inmediata
+                        // Forzar chequeo inmediato de actualización
                         reg.update();
 
-                        // Verificar actualizaciones cada 5 minutos automáticamente
+                        // Verificar actualizaciones cada 5 minutos
                         setInterval(() => {
                             reg.update();
                             console.log('Verificando actualizaciones de SW...');
-                        }, 1000 * 60 * 5);
+                        }, 300000);
 
-                        // Detectar nueva actualización
+                        // Detectar nueva versión
                         reg.onupdatefound = () => {
                             const installingWorker = reg.installing;
                             installingWorker.onstatechange = () => {
                                 if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // Nueva versión disponible, recargar pantalla para aplicarla
                                     console.log('Nueva versión detectada. Actualizando...');
                                     window.location.reload();
                                 }
