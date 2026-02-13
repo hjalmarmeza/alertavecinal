@@ -39,10 +39,10 @@ self.addEventListener('fetch', (e) => {
     const url = new URL(e.request.url);
 
     // ESTRATEGIA 1: Network-First (Internet Primero)
-    // Para archivos críticos que cambian frecuentemente (Lógica y Estructura)
-    // Esto asegura que si hay internet, SIEMPRE se baje la última versión.
+    // Añadimos .css para que los cambios de diseño lleguen rápido
     if (url.pathname.endsWith('index.html') ||
         url.pathname.endsWith('app.js') ||
+        url.pathname.endsWith('style.css') ||
         url.pathname.endsWith('/')) {
 
         e.respondWith(

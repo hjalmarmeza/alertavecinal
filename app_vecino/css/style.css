@@ -144,12 +144,13 @@ input:-webkit-autofill:active {
 
 .scroll-content {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     padding: 24px;
-    padding-bottom: 160px;
-    /* Aumentado para asegurar que los botones finales sean visibles */
-    min-height: 0;
+    padding-bottom: 200px;
+    /* Aumentado más para asegurar scroll */
+    min-height: 200px;
 }
 
 /* --- GLASS CARDS & FORMS --- */
