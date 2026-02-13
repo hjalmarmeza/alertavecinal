@@ -516,18 +516,23 @@ input:-webkit-autofill:active {
 }
 
 /* DOCK NAVIGATION */
+/* DOCK NAVIGATION */
 .bottom-nav {
     position: absolute;
-    bottom: 30px;
-    left: 24px;
-    right: 24px;
+    bottom: 20px;
+    /* Menos margen inferior */
+    left: 20px;
+    right: 20px;
     height: auto;
-    padding: 12px 0;
-    background: rgba(15, 23, 42, 0.8);
+    padding: 8px 0;
+    /* Más delgado */
+    background: rgba(15, 23, 42, 0.9);
+    /* Más opaco para contraste */
     backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 24px;
+    border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    /* Sombra ajustada */
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -537,35 +542,38 @@ input:-webkit-autofill:active {
 .nav-item {
     background: transparent;
     border: none;
-    /* Remove default button border */
     color: #64748b;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 80px;
-    /* Wider to fit text */
+    width: 70px;
+    /* Más compacto */
     height: auto;
-    padding: 10px 0;
-    border-radius: 16px;
-    /* Pill shape */
+    padding: 6px 0;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
-    /* Stack Icon and Text */
-    gap: 4px;
+    gap: 2px;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 }
 
 .nav-item .material-icons-round {
-    font-size: 2rem;
+    font-size: 1.7rem;
+    /* Iconos más pequeños */
+}
+
+.nav-item span:not(.material-icons-round) {
+    font-size: 0.65rem !important;
+    /* Texto más pequeño forzado */
+    font-weight: 500;
 }
 
 .nav-item.active {
     color: #f43f5e;
-    /* Neon Red instead of just white */
     background: rgba(244, 63, 94, 0.1);
-    /* Subtle glow bg */
-    transform: translateY(-8px);
-    box-shadow: 0 5px 15px rgba(244, 63, 94, 0.2);
+    transform: translateY(-4px);
+    /* Menos salto */
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
 }
 
 .nav-item.active .material-icons-round {
@@ -577,11 +585,12 @@ input:-webkit-autofill:active {
     background: rgba(16, 185, 129, 0.1);
     border: 1px dashed rgba(16, 185, 129, 0.4);
     border-radius: var(--radius-md);
-    padding: 20px;
-    margin: 20px 0;
+    padding: 15px;
+    /* Reducido un poco */
+    margin: 15px 0;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .gps-lock-box.success {
