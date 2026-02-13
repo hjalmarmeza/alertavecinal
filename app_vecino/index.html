@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Alerta Vecinal</title>
-    <link rel="stylesheet" href="css/style.css?v=premium_5.7">
+    <link rel="stylesheet" href="css/style.css?v=premium_5.8">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -291,7 +291,7 @@
             style="width: 100%; height: 100%; border: none; background: #0f172a;"></iframe>
     </section>
 
-    <script src="js/app.js?v=premium_5.6"></script>
+    <script src="js/app.js?v=premium_5.8"></script>
     <script>
         // Registro de Service Worker para actualizaciones automáticas
         if ('serviceWorker' in navigator) {
@@ -299,6 +299,13 @@
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => {
                         console.log('SW registrado: ', reg.scope);
+
+                        // Verificar actualizaciones cada 5 minutos automáticamente
+                        setInterval(() => {
+                            reg.update();
+                            console.log('Verificando actualizaciones de SW...');
+                        }, 1000 * 60 * 5);
+
                         // Detectar nueva actualización
                         reg.onupdatefound = () => {
                             const installingWorker = reg.installing;
@@ -306,7 +313,7 @@
                                 if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // Nueva versión disponible, recargar pantalla para aplicarla
                                     console.log('Nueva versión detectada. Actualizando...');
-                                    window.location.reload(); 
+                                    window.location.reload();
                                 }
                             };
                         };

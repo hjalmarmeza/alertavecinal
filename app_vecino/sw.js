@@ -1,9 +1,9 @@
-const CACHE_NAME = 'alertavecinal-vecino-v1';
+const CACHE_NAME = 'alertavecinal-vecino-v2'; // Versión 2.2 - Forzar actualización
 const ASSETS = [
     './',
-    './index.html',
-    './css/style.css',
-    './js/app.js',
+    './index.html?v=5.8',
+    './css/style.css?v=5.8',
+    './js/app.js?v=5.8',
     './manifest.json',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
 ];
