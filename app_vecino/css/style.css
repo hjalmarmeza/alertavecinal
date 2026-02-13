@@ -881,46 +881,35 @@ input:-webkit-autofill:active {
     /* Indicar que es clickeable */
 }
 
-/* FIX FINAL V6.5: ESTRATEGIA FLEXBOX PURO */
+/* FIX FINAL V6.6: ESTRATEGIA POSICION ABSOLUTA SIMPLE */
 #screen-register {
-    display: flex !important;
-    flex-direction: column !important;
+    display: block !important;
     position: fixed !important;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100% !important;
-    /* Fallback */
-    height: 100dvh !important;
-    overflow: hidden !important;
-    /* El contenedor NO scrollea */
-    z-index: 50;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll !important;
+    /* El scroll está en el contenedor principal */
+    -webkit-overflow-scrolling: touch;
+    z-index: 100 !important;
     background: var(--bg-deep);
-    /* Asegurar fondo opaco */
+    padding-bottom: 0 !important;
 }
 
 #screen-register .home-header {
-    flex: 0 0 auto;
-    /* No encoger ni crecer */
-    position: relative;
-    /* No sticky, flujo normal */
-    z-index: 60;
-    background: transparent;
-    /* Ya tiene fondo el padre o usar glass */
+    position: sticky;
+    top: 0;
+    z-index: 101;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
 }
 
 #screen-register .scroll-content {
-    flex: 1 1 auto;
-    /* Crecer para ocupar todo el espacio restante */
     display: block !important;
-    overflow-y: scroll !important;
-    /* Scroll interno obligatorio */
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 300px !important;
-    /* Espacio extra seguro */
     height: auto !important;
-    min-height: 0 !important;
-    /* Clave para flexbox scroll */
+    min-height: auto !important;
+    overflow: visible !important;
+    padding-bottom: 250px !important;
+    flex: none !important;
 }

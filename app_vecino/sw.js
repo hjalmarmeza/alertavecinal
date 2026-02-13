@@ -1,9 +1,9 @@
-const CACHE_NAME = 'alertavecinal-vecino-v6'; // Versión 2.6 - Flexbox Pure Fix
+const CACHE_NAME = 'alertavecinal-vecino-v7'; // Versión 2.7 - Absolute Position
 const ASSETS = [
     './',
-    './index.html?v=6.5',
-    './css/style.css?v=6.5',
-    './js/app.js?v=6.5',
+    './index.html?v=6.6',
+    './css/style.css?v=6.6',
+    './js/app.js?v=6.6',
     './manifest.json',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
 ];
