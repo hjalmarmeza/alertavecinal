@@ -881,56 +881,48 @@ input:-webkit-autofill:active {
     /* Indicar que es clickeable */
 }
 
-/* FIX FINAL V7.0: ABSOLUTE PINNING STRATEGY (IOS ROBUST) */
+/* FIX FINAL V8.0: ABSOLUTE POSITION + OVERSCROLL FIX */
 #screen-register {
+    /* Usamos Absolute en lugar de Fixed para evitar problemas con teclado/scroll en iOS */
     display: block !important;
-    position: fixed !important;
+    position: absolute !important;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100% !important;
     height: 100% !important;
-    overflow: hidden !important;
-    /* El contenedor padre NO scrollea */
+
+    /* Scroll Nativo y Contenido */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    /* Evita que el scroll se propague al body */
+
     background: var(--bg-deep);
     z-index: 50;
+    padding: 0 !important;
 }
 
 #screen-register .home-header {
-    position: absolute !important;
+    position: sticky;
+    /* Sticky funciona bien dentro de contenedores con scroll */
     top: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    min-height: 80px;
     z-index: 60;
     background: rgba(15, 23, 42, 0.98);
-    /* Fondo casi opaco */
     backdrop-filter: blur(10px);
+    margin: 0 !important;
+    width: 100%;
 }
 
 #screen-register .scroll-content {
-    position: absolute !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 100% !important;
-    overflow-y: scroll !important;
-    -webkit-overflow-scrolling: touch;
-    /* Inercia nativa */
-
-    /* Espaciado vital */
-    padding-top: 100px !important;
-    /* Espacio para el header */
-    padding-bottom: 300px !important;
-    /* Espacio para el final */
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-
     display: block !important;
-    flex: none !important;
+    position: static !important;
+    /* Flujo normal */
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: 300px !important;
+    /* Espacio generoso para llegar al final */
+    transform: none !important;
+    /* Evitar nuevos contextos de apilamiento */
 }
