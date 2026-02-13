@@ -41,8 +41,12 @@
     </section>
 
     <!-- PANTALLA 2: REGISTRO (REDISEÑADA) -->
-    <section id="screen-register" class="screen">
-        <div class="home-header" style="padding-bottom: 0;">
+    <!-- FIX V9.0: Estilos Inline para Garantizar Scroll en iOS -->
+    <section id="screen-register" class="screen"
+        style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 50; background: #0f172a;">
+
+        <div class="home-header"
+            style="padding-bottom: 0; position: sticky; top: 0; z-index: 60; background: rgba(15,23,42,0.95); backdrop-filter: blur(10px);">
             <button onclick="App.nav.to('screen-login')" class="btn-icon-back">
                 <span class="material-icons-round">arrow_back</span>
             </button>
@@ -50,7 +54,7 @@
             <div style="width: 44px;"></div> <!-- Spacer -->
         </div>
 
-        <div class="scroll-content">
+        <div class="scroll-content" style="padding-bottom: 300px; min-height: 101%; overflow: visible;">
             <form id="form-register">
 
                 <h3
@@ -291,13 +295,13 @@
             style="width: 100%; height: 100%; border: none; background: #0f172a;"></iframe>
     </section>
 
-    <link rel="stylesheet" href="css/style.css?v=premium_8.0">
-    <script src="js/app.js?v=premium_8.0"></script>
+    <link rel="stylesheet" href="css/style.css?v=premium_9.0">
+    <script src="js/app.js?v=premium_9.0"></script>
     <script>
         // Registro de Service Worker para actualizaciones automáticas
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js?v=4.8')
+                navigator.serviceWorker.register('./sw.js?v=4.9')
                     .then(reg => {
                         console.log('SW registrado: ', reg.scope);
 
