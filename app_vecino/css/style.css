@@ -103,22 +103,21 @@ input:-webkit-autofill:active {
     }
 }
 
-/* --- SCREEN LAYOUT (OPTIMIZADO PARA MOVIL) --- */
+/* --- SCREEN LAYOUT (RE-INGENIERÍA SCROLL IOS) --- */
 .screen {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
     height: 100%;
-    height: 100dvh;
-    /* Dynamic Viewport para móviles */
     background: var(--bg-deep);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    /* Evita scroll de la pantalla entera */
     z-index: 10;
+
+    /* EL SCROLL DEBE ESTAR AQUI PARA IOS */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* Clave para inercia en iOS */
 
     /* Transiciones */
     opacity: 0;
@@ -131,17 +130,22 @@ input:-webkit-autofill:active {
     opacity: 1;
     pointer-events: auto;
     transform: scale(1);
+    /* Importante: No bloquear scroll en estado activo */
+    overflow-y: auto;
 }
 
 .scroll-content {
-    flex: 1;
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    /* Ya no es flex container, es bloque normal */
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    /* Centrado */
     padding: 24px;
-    padding-bottom: 200px;
-    /* Aumentado más para asegurar scroll */
-    min-height: 200px;
+    padding-bottom: 120px;
+    /* Espacio final */
+    min-height: 101%;
+    /* Forzar scroll siempre */
 }
 
 /* --- GLASS CARDS & FORMS --- */
@@ -190,15 +194,14 @@ input:-webkit-autofill:active {
 .btn-primary {
     width: 100%;
     height: 60px;
-    /* DEBUG: Color azul temporal para confirmar actualización */
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border: none;
     border-radius: var(--radius-md);
     color: white;
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.5px;
-    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.5);
     cursor: pointer;
     margin-top: 24px;
     transition: transform 0.2s, box-shadow 0.2s;
