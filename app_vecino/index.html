@@ -41,94 +41,94 @@
     </section>
 
     <!-- PANTALLA 2: REGISTRO (REDISEÑADA) -->
-    <!-- FIX V9.0: Estilos Inline para Garantizar Scroll en iOS -->
-    <section id="screen-register" class="screen"
-        style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 50; background: #0f172a;">
+    <!-- FIX V10.0: Wrapper de Scroll Aislado -->
+    <section id="screen-register" class="screen">
+        <div class="register-scroller">
+            <div class="home-header">
+                <button onclick="App.nav.to('screen-login')" class="btn-icon-back">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Crear Cuenta</h2>
+                <div style="width: 44px;"></div> <!-- Spacer -->
+            </div>
 
-        <div class="home-header"
-            style="padding-bottom: 0; position: sticky; top: 0; z-index: 60; background: rgba(15,23,42,0.95); backdrop-filter: blur(10px);">
-            <button onclick="App.nav.to('screen-login')" class="btn-icon-back">
-                <span class="material-icons-round">arrow_back</span>
-            </button>
-            <h2 style="font-size: 1.5rem; font-weight: 700;">Crear Cuenta</h2>
-            <div style="width: 44px;"></div> <!-- Spacer -->
-        </div>
+            <div class="scroll-content">
+                <form id="form-register">
 
-        <div class="scroll-content" style="padding-bottom: 300px; min-height: 101%; overflow: visible;">
-            <form id="form-register">
+                    <h3
+                        style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 15px; font-weight: 800; text-transform: uppercase;">
+                        1. Tu Identidad</h3>
 
-                <h3
-                    style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 15px; font-weight: 800; text-transform: uppercase;">
-                    1. Tu Identidad</h3>
-
-                <div class="input-group">
-                    <span class="material-icons-round">person</span>
-                    <input type="text" id="reg-nombre" placeholder="Nombre Completo" required
-                        style="text-transform: uppercase;">
-                </div>
-
-                <div class="input-group">
-                    <span class="material-icons-round">group</span>
-                    <input type="text" id="reg-familia" placeholder="Familia (Ej: Familia Pérez)" required
-                        style="text-transform: uppercase;">
-                </div>
-
-                <div class="input-group">
-                    <span class="material-icons-round">phone_iphone</span>
-                    <input type="tel" id="reg-telefono" placeholder="Celular" required>
-                </div>
-
-                <div class="input-group">
-                    <span class="material-icons-round">alternate_email</span>
-                    <input type="email" id="reg-email" placeholder="Correo Personal" required
-                        style="text-transform: uppercase;">
-                </div>
-
-                <div class="input-group">
-                    <span class="material-icons-round">vpn_key</span>
-                    <input type="password" id="reg-pass" placeholder="Crear Contraseña" required>
-                </div>
-
-                <h3
-                    style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase;">
-                    2. Tu Ubicación</h3>
-
-                <div class="input-group">
-                    <span class="material-icons-round">location_city</span>
-                    <input type="text" id="reg-urb" value="Urb. Melitón Carbajal" readonly
-                        style="opacity: 0.8; cursor: not-allowed; background: transparent; border: none; font-size: 1.1rem; color: white; width:100%; text-transform: uppercase;">
-                </div>
-
-                <div class="input-group">
-                    <span class="material-icons-round">add_road</span>
-                    <input type="text" id="reg-calle" placeholder="Calle / Avenida" style="text-transform: uppercase;">
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="input-group">
-                        <span class="material-icons-round">grid_3x3</span>
-                        <input type="text" id="reg-mz" placeholder="Mz" style="text-transform: uppercase;">
+                        <span class="material-icons-round">person</span>
+                        <input type="text" id="reg-nombre" placeholder="Nombre Completo" required
+                            style="text-transform: uppercase;">
                     </div>
+
                     <div class="input-group">
-                        <span class="material-icons-round">home</span>
-                        <input type="text" id="reg-lote" placeholder="Lote" style="text-transform: uppercase;">
+                        <span class="material-icons-round">group</span>
+                        <input type="text" id="reg-familia" placeholder="Familia (Ej: Familia Pérez)" required
+                            style="text-transform: uppercase;">
                     </div>
-                </div>
 
-                <!-- GPS LOCK -->
-                <div class="gps-lock-box" id="gps-box">
-                    <div class="gps-status">
-                        <span class="material-icons-round" id="gps-icon">my_location</span>
+                    <div class="input-group">
+                        <span class="material-icons-round">phone_iphone</span>
+                        <input type="tel" id="reg-telefono" placeholder="Celular" required>
                     </div>
-                    <div class="gps-text">
-                        <strong>Ubicación GPS</strong>
-                        <small id="gps-msg">Autodetectando coordenadas...</small>
-                    </div>
-                    <input type="hidden" id="reg-coords">
-                </div>
 
-                <button type="submit" class="btn-primary" style="margin-bottom: 40px;">CONFIRMAR REGISTRO</button>
-            </form>
+                    <div class="input-group">
+                        <span class="material-icons-round">alternate_email</span>
+                        <input type="email" id="reg-email" placeholder="Correo Personal" required
+                            style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons-round">vpn_key</span>
+                        <input type="password" id="reg-pass" placeholder="Crear Contraseña" required>
+                    </div>
+
+                    <h3
+                        style="color: var(--primary); font-size: 0.85rem; letter-spacing: 1px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase;">
+                        2. Tu Ubicación</h3>
+
+                    <div class="input-group">
+                        <span class="material-icons-round">location_city</span>
+                        <input type="text" id="reg-urb" value="Urb. Melitón Carbajal" readonly
+                            style="opacity: 0.8; cursor: not-allowed; background: transparent; border: none; font-size: 1.1rem; color: white; width:100%; text-transform: uppercase;">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons-round">add_road</span>
+                        <input type="text" id="reg-calle" placeholder="Calle / Avenida"
+                            style="text-transform: uppercase;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <span class="material-icons-round">grid_3x3</span>
+                            <input type="text" id="reg-mz" placeholder="Mz" style="text-transform: uppercase;">
+                        </div>
+                        <div class="input-group">
+                            <span class="material-icons-round">home</span>
+                            <input type="text" id="reg-lote" placeholder="Lote" style="text-transform: uppercase;">
+                        </div>
+                    </div>
+
+                    <!-- GPS LOCK -->
+                    <div class="gps-lock-box" id="gps-box">
+                        <div class="gps-status">
+                            <span class="material-icons-round" id="gps-icon">my_location</span>
+                        </div>
+                        <div class="gps-text">
+                            <strong>Ubicación GPS</strong>
+                            <small id="gps-msg">Autodetectando coordenadas...</small>
+                        </div>
+                        <input type="hidden" id="reg-coords">
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-bottom: 40px;">CONFIRMAR REGISTRO</button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -295,13 +295,13 @@
             style="width: 100%; height: 100%; border: none; background: #0f172a;"></iframe>
     </section>
 
-    <link rel="stylesheet" href="css/style.css?v=premium_9.0">
-    <script src="js/app.js?v=premium_9.0"></script>
+    <link rel="stylesheet" href="css/style.css?v=premium_10.0">
+    <script src="js/app.js?v=premium_10.0"></script>
     <script>
         // Registro de Service Worker para actualizaciones automáticas
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js?v=4.9')
+                navigator.serviceWorker.register('./sw.js?v=4.10')
                     .then(reg => {
                         console.log('SW registrado: ', reg.scope);
 

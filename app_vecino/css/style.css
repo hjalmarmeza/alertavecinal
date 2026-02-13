@@ -876,7 +876,61 @@ input:-webkit-autofill:active {
 
 /* NEWS INTERACTION */
 .news-card {
-    /* ... existing styles ... */
     cursor: pointer;
     /* Indicar que es clickeable */
+}
+
+/* FIX FINAL V10.0: WRAPPER AISLADO */
+#screen-register {
+    /* Contenedor ESTÁTICO y FIJO. Solo sirve de marco. NO SCROLLEA. */
+    display: block !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden !important;
+    z-index: 50;
+    background: var(--bg-deep);
+}
+
+.register-scroller {
+    /* Este es el ÚNICO elemento que scrollea */
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    z-index: 55;
+    background: transparent;
+}
+
+/* Header dentro del scroller */
+#screen-register .home-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+/* Contenido dentro del scroller */
+#screen-register .scroll-content {
+    display: block;
+    position: relative;
+    height: auto;
+    min-height: auto;
+    padding-bottom: 250px;
+    /* Vital para iOS */
+    overflow: visible;
 }
