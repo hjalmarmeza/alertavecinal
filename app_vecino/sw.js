@@ -1,9 +1,9 @@
-const CACHE_NAME = 'alertavecinal-vecino-v10'; // Versión 2.10 - Structural Wrapper Fix
+const CACHE_NAME = 'alertavecinal-vecino-v11'; // Versión 2.11 - JS Body Scroll Unlock
 const ASSETS = [
     './',
-    './index.html?v=10.0',
-    './css/style.css?v=10.0',
-    './js/app.js?v=10.0',
+    './index.html?v=11.0',
+    './css/style.css?v=11.0',
+    './js/app.js?v=11.0',
     './manifest.json',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
 ];

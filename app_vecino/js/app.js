@@ -220,11 +220,35 @@ const App = {
                 }
             }
 
+            // FIX SCROLL MAGIC:
+            // Si vamos al registro, desbloquear el scroll del BODY.
+            // Esto permite que el navegador maneje el scroll nativamente sin restricciones CSS.
+            if (screenId === 'screen-register') {
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto'; // HTML tag
+                screen.style.position = 'absolute'; // Dejar de ser fixed
+                screen.style.height = 'auto'; // Crecer con el contenido
+                screen.style.minHeight = '100vh';
+            } else {
+                // Restaurar modo App (SPA)
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+                screen.style.position = ''; // Restaurar CSS original
+                screen.style.height = '';
+                screen.style.minHeight = '';
+            }
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             screen.classList.add('active');
             history.pushState({ screen: screenId }, screenId, `#${screenId}`);
+
+            // Scroll to top always
+            window.scrollTo(0, 0);
         },
         back: () => {
+            // Restaurar scroll lock al volver
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             history.back();
         }
     },

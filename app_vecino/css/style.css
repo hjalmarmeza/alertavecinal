@@ -880,36 +880,22 @@ input:-webkit-autofill:active {
     /* Indicar que es clickeable */
 }
 
-/* FIX FINAL V10.0: WRAPPER AISLADO */
+/* FIX FINAL V11.0: JS DRIVEN SCROLL */
 #screen-register {
-    /* Contenedor ESTÁTICO y FIJO. Solo sirve de marco. NO SCROLLEA. */
+    /* El JS modificará position: absolute cuando sea necesario */
     display: block !important;
-    position: fixed !important;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden !important;
+    min-height: 100vh;
     z-index: 50;
     background: var(--bg-deep);
 }
 
 .register-scroller {
-    /* Este es el ÚNICO elemento que scrollea */
+    /* No hace nada especial, solo contiene */
     display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    z-index: 55;
-    background: transparent;
+    height: auto;
+    overflow: visible;
 }
 
 /* Header dentro del scroller */
