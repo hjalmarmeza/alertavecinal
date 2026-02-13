@@ -135,17 +135,18 @@ input:-webkit-autofill:active {
 }
 
 .scroll-content {
-    /* Ya no es flex container, es bloque normal */
     display: block;
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    /* Centrado */
     padding: 24px;
-    padding-bottom: 120px;
-    /* Espacio final */
-    min-height: 101%;
-    /* Forzar scroll siempre */
+    padding-bottom: 250px;
+    /* Aumentado drásticamente para superar cualquier safe-area */
+    min-height: calc(100% + 1px);
+    /* Truco para forzar siempre scroll en iOS */
+    touch-action: pan-y;
+    /* Habilitar scroll vertical explícito */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* --- GLASS CARDS & FORMS --- */
