@@ -1,4 +1,4 @@
-const CACHE_NAME = 'alertavecinal-vecino-v4'; // Versión 2.4 - Bust Cache Final
+const CACHE_NAME = 'alertavecinal-vecino-v5'; // Versión 2.5 - Seguridad Total
 const ASSETS = [
     './',
     './index.html?v=6.0',
