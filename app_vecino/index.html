@@ -296,9 +296,13 @@
         // Registro de Service Worker para actualizaciones automáticas
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                // Forzamos la revalidación con un parámetro dinámico para iOS
+                navigator.serviceWorker.register('./sw.js?v=2.2')
                     .then(reg => {
                         console.log('SW registrado: ', reg.scope);
+
+                        // Forzar chequeo de actualización inmediata
+                        reg.update();
 
                         // Verificar actualizaciones cada 5 minutos automáticamente
                         setInterval(() => {
