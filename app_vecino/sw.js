@@ -1,9 +1,9 @@
 const CACHE_NAME = 'alertavecinal-vecino-v7'; // Versión 2.7 - Absolute Position
 const ASSETS = [
     './',
-    './index.html?v=6.6',
-    './css/style.css?v=6.6',
-    './js/app.js?v=6.6',
+    './index.html?v=7.0',
+    './css/style.css?v=7.0',
+    './js/app.js?v=7.0',
     './manifest.json',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
 ];
