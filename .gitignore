@@ -1,0 +1,6 @@
+node_modules/
+.wwebjs_auth/
+.wwebjs_cache/
+qr_code.png
+.env
+.DS_Store

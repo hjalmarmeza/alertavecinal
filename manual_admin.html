@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Presidente - Alerta Vecinal</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-sec: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 120px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            margin: 40px auto 0;
+            border-radius: 2px;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-sec);
+            margin-top: 20px;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 60px;
+            margin-bottom: 100px;
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            position: relative;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .step-number {
+            font-size: 8rem;
+            font-weight: 900;
+            position: absolute;
+            top: -40px;
+            left: 40px;
+            line-height: 1;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Inter', sans-serif;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: -5px;
+        }
+
+        .step-card:nth-child(even) .step-number {
+            left: auto;
+            right: 40px;
+        }
+
+        .step-content {
+            flex: 1;
+            z-index: 1;
+            position: relative;
+        }
+
+        .step-title {
+            font-size: 2.5rem;
+            color: #fff;
+            margin: 0 0 25px 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .step-desc {
+            font-size: 1.15rem;
+            color: var(--text-sec);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        ul {
+            padding-left: 0;
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        li::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .phone-mockup {
+            width: 320px;
+            border-radius: 48px;
+            box-shadow:
+                0 0 0 8px #1e293b,
+                0 0 0 10px #0f172a,
+                0 50px 100px -20px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            transform: rotate(-2deg);
+            background: #000;
+        }
+
+        .step-card:nth-child(even) .phone-mockup {
+            transform: rotate(2deg);
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .nav-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #fff;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .badge.admin {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+        }
+
+        .badge.info {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .badge.alert {
+            background: rgba(244, 63, 94, 0.2);
+            color: #f43f5e;
+        }
+
+        @media (max-width: 900px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .step-card {
+                flex-direction: column !important;
+                padding: 40px 30px;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .step-number {
+                position: static;
+                display: block;
+                font-size: 4rem;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .phone-mockup {
+                width: 100%;
+                max-width: 280px;
+                margin: 0 auto 20px;
+                transform: rotate(0deg) !important;
+            }
+
+            li {
+                text-align: left;
+                display: inline-block;
+            }
+        }
+
+        @media print {
+
+            .print-btn,
+            .nav-switch {
+                display: none;
+            }
+
+            body {
+                background: #fff;
+                color: #000;
+                background-image: none;
+            }
+
+            .step-card {
+                background: #fff;
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+                margin-bottom: 40px;
+                padding: 40px;
+                color: #000;
+                display: block;
+            }
+
+            .phone-mockup {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                transform: none !important;
+                margin: 0 auto;
+                max-width: 200px;
+            }
+
+            h1 {
+                -webkit-text-fill-color: #000;
+                color: #000;
+            }
+
+            .step-title,
+            .step-desc,
+            li {
+                color: #000;
+            }
+
+            .step-number {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="manual_visual.html" class="nav-switch">← Ver Manual Vecino</a>
+
+    <button class="print-btn" onclick="window.print()">
+        <span class="material-icons-round">print</span> Imprimir / Guardar PDF
+    </button>
+
+    <div class="container">
+        <header>
+            <div style="font-size:4rem; margin-bottom:10px;">👔</div>
+            <h1>Manual del Presidente</h1>
+            <p class="subtitle">Guía de administración y gestión vecinal</p>
+        </header>
+
+        <!-- PASO 1 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">01</span>
+                <span class="badge info">ACCESO</span>
+                <h2 class="step-title">Ingreso al Sistema</h2>
+                <p class="step-desc">
+                    Inicia sesión en la App como cualquier vecino.
+                </p>
+                <div class="step-desc">
+                    <p>Usa tu cuenta de administrador (Presidente). Al principio verás la pantalla normal de vecino con
+                        el botón de pánico.</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso1_login.png" alt="Login Admin">
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">02</span>
+                <span class="badge admin">MODO ADMIN</span>
+                <h2 class="step-title">Panel de Gestión</h2>
+                <p class="step-desc">
+                    Accede a las herramientas exclusivas.
+                </p>
+                <div class="step-desc">
+                    <ul>
+                        <li><b>Botón Escudo/Engranaje:</b> En la esquina superior derecha (junto a tu nombre) verás un
+                            icono especial. Tócalo.</li>
+                        <li><b>Acceso:</b> Esto te llevará al Panel de Control donde podrás gestionar usuarios y
+                            alertas.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso2_panel.png" alt="Acceso Panel">
+            </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">03</span>
+                <span class="badge alert">SOLICITUDES</span>
+                <h2 class="step-title">Aprobar Vecinos</h2>
+                <p class="step-desc">
+                    Revisa las solicitudes pendientes de nuevos registros.
+                </p>
+                <div class="step-desc">
+                    <p><b>Validar:</b> Revisa que el nombre y dirección (Mz/Lote) sean correctos.</p>
+                    <p><b>Acción:</b> Toca el botón <b>VERDE</b> para aprobar y dar acceso inmediato, o el botón
+                        <b>ROJO</b> para rechazar.</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso3_aprobar.png" alt="Aprobar Solicitudes">
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">04</span>
+                <span class="badge info">PERFIL</span>
+                <h2 class="step-title">Perfil de Usuario</h2>
+                <p class="step-desc">
+                    Vista detallada de la cuenta.
+                </p>
+                <div class="step-desc">
+                    <p>Desde aquí puedes ver la información del perfil del presidente o gestionar tu sesión.</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso4_perfil.png" alt="Perfil Usuario">
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">05</span>
+                <span class="badge alert">CONFIGURACIÓN</span>
+                <h2 class="step-title">Teléfonos de Emergencia</h2>
+                <p class="step-desc">
+                    Gestiona los números de ayuda rápida.
+                </p>
+                <div class="step-desc">
+                    <p>En esta pantalla debes configurar los números a llamar (Policía, Bomberos, Serenazgo).</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso5_telefonos.png" alt="Teléfonos Emergencia">
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">06</span>
+                <span class="badge info">COMUNIDAD</span>
+                <h2 class="step-title">Directorio Vecinal</h2>
+                <p class="step-desc">
+                    Contactos útiles para la urbanización.
+                </p>
+                <div class="step-desc">
+                    <p>En este campo se deben configurar los números telefónicos varios para uso de la comunidad.</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso6_directorio.png" alt="Directorio Vecinal">
+            </div>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="step-card">
+            <div class="step-content">
+                <span class="step-number">07</span>
+                <span class="badge admin">AUDITORÍA</span>
+                <h2 class="step-title">Historial SOS</h2>
+                <p class="step-desc">
+                    Registro de eventos.
+                </p>
+                <div class="step-desc">
+                    <p>Esta es la pestaña de historial SOS. Revisa quién activó la alerta y cuándo.</p>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <img src="./app_vecino/img/manual/admin_v2/paso7_historial.png" alt="Historial SOS">
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
