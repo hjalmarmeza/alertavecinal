@@ -344,8 +344,8 @@ const App = {
 
     // --- API ---
     api: {
-        // URL del Bot de WhatsApp en Google Cloud (servidor 24/7)
-        whatsappBotUrl: 'http://34.28.206.25:3000/alerta',
+        // URL del Bot de WhatsApp en Google Cloud (con HTTPS vía Cloudflare)
+        whatsappBotUrl: 'https://playstation-delete-liabilities-cornwall.trycloudflare.com/alerta',
         whatsappGroupId: '120363422780127072@g.us',
 
         sendAlert: () => {
