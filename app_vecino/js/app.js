@@ -345,7 +345,7 @@ const App = {
     // --- API ---
     api: {
         // URL del Bot de WhatsApp en Google Cloud (con HTTPS vía Cloudflare)
-        whatsappBotUrl: 'https://enables-emily-perception-county.trycloudflare.com/alerta',
+        whatsappBotUrl: 'https://postage-invisible-diet-confirmed.trycloudflare.com/alerta',
         whatsappGroupId: '120363422780127072@g.us',
 
         sendAlert: () => {
