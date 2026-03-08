@@ -310,7 +310,7 @@ const App = {
 
             // 2. Mostrar Alert visual (Diferido 300ms para asegurar que el request salga del movil)
             setTimeout(() => {
-                alert("🚨 ALERTA ENVIADA 🚨\n\nSe ha notificado vía Telegram a toda la comunidad y a la central.");
+                alert("🚨 ALERTA ENVIADA 🚨\n\nSe ha notificado vía Telegram y WhatsApp a toda la comunidad y a la central.");
                 // Reset visual extra por seguridad
                 const btn = document.getElementById('btn-panic');
                 if (btn) btn.classList.remove('active-tap');
@@ -344,13 +344,33 @@ const App = {
 
     // --- API ---
     api: {
+        // URL del Bot de WhatsApp en Google Cloud (servidor 24/7)
+        whatsappBotUrl: 'http://34.28.206.25:3000/alerta',
+        whatsappGroupId: '120363422780127072@g.us',
+
         sendAlert: () => {
             if (!App.user) return;
-            // Usamos GET con parámetros para asegurar que Google Script procese la alerta correctamente
-            const query = `?action=send_alert&user_id=${encodeURIComponent(App.user.email)}&familia=${encodeURIComponent(App.user.familia)}&direccion=${encodeURIComponent("Mz " + App.user.mz + " Lt " + App.user.lote)}&coords=${encodeURIComponent(App.gps.current || "0,0")}`;
 
+            const coords = App.gps.current || "0,0";
+            const coordsLink = coords !== "0,0"
+                ? `\n📍 Ubicación: https://maps.google.com/?q=${coords}`
+                : "";
+
+            // --- VÍA 1: Telegram (sistema existente, no se modifica) ---
+            const query = `?action=send_alert&user_id=${encodeURIComponent(App.user.email)}&familia=${encodeURIComponent(App.user.familia)}&direccion=${encodeURIComponent("Mz " + App.user.mz + " Lt " + App.user.lote)}&coords=${encodeURIComponent(coords)}`;
             fetch(App.apiUrl + query, { mode: 'no-cors' })
-                .catch(err => console.error("SOS Fetch Error:", err));
+                .catch(err => console.error("SOS Telegram Error:", err));
+
+            // --- VÍA 2: WhatsApp (nuevo bot en Google Cloud) ---
+            const mensaje = `🚨 *ALERTA SOS* 🚨\n\n*FAMILIA ${App.user.familia.toUpperCase()}* ha activado el botón de pánico.\n📍 Dirección: Mz ${App.user.mz} Lt ${App.user.lote}${coordsLink}\n\n⚠️ Por favor, acudan a verificar.`;
+            fetch(App.api.whatsappBotUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    groupId: App.api.whatsappGroupId,
+                    mensaje: mensaje
+                })
+            }).catch(err => console.error("SOS WhatsApp Error:", err));
         }
     },
 
